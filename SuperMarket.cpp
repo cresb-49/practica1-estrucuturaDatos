@@ -107,6 +107,16 @@ void caja::setSiguinte(caja *_siguiente){
 int numCarretas=0,numCajas=0;
 string reader;
 
+carreta *pilaCarreta1,*pilaCarreta2;
+
+
+//////DEFINICION DE METODOS DEL PROGRAMA
+void agregarCarreta(carreta *nuevaCarreta,int pila);
+carreta* tomarCarreta(int pila);
+//////FIN DE DEFINICION DE METODOS DEL PROGRAMA
+
+
+
 int main(){
 
     printf("Bienvenido a la simulacion de SuperMercado\n");
@@ -143,4 +153,28 @@ int main(){
     
     printf("El numero de carretas son: %d, el numero de cajas son: %d \n",numCarretas,numCajas);
     return 0;
+}
+
+void agregarCarreta(carreta *nuevaCarreta,int pila){
+    if(pila==1){
+
+    }else if(pila ==2){
+
+    }else{
+        printf("Error al agregar la carreta, ruta por defecto pila 1\n");
+        agregarCarreta(nuevaCarreta,1);
+    }
+}
+
+carreta* tomarCarreta(int pila){
+
+    if(pila==1){
+
+    }else if(pila ==2){
+
+    }else{
+        printf("Error al tomar la carreta, ruta por defecto pila 1\n");
+        tomarCarreta(1);
+    }
+    return NULL;
 }
