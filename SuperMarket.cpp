@@ -104,7 +104,7 @@ void caja::setSiguinte(caja *_siguiente){
 }
 
 ////SECCION DEL CODIGO PRINCIPAL DEL CODIGO 
-int SuperMarket(){
+int main(){
 
     printf("Bienvenido a la simulacion de SuperMercado\n");
 
