@@ -104,11 +104,43 @@ void caja::setSiguinte(caja *_siguiente){
 }
 
 ////SECCION DEL CODIGO PRINCIPAL DEL CODIGO 
+int numCarretas=0,numCajas=0;
+string reader;
+
 int main(){
 
     printf("Bienvenido a la simulacion de SuperMercado\n");
 
-    printf("Ingrese el numero de Carretas: ");
-    printf("Ingrese el numero de Cajas: ");
+    while (numCarretas == 0)
+    {
+        printf("Ingrese el numero de Carretas: ");
+        cin >> reader;
+        try
+        {
+            numCarretas= std::stoi(reader);    
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "Cantidad de ingreso invalida!!" << '\n';
+        }        
+    }
+    
+    while (numCajas == 0)
+    {
+        printf("Ingrese el numero de Cajas: ");
+        cin >> reader;
+        try
+        {
+            numCajas = std::stoi(reader);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << "Cantidad de ingreso invalida" << '\n';
+        }
+        
+    }
+    
+    
+    printf("El numero de carretas son: %d, el numero de cajas son: %d \n",numCarretas,numCajas);
     return 0;
 }
