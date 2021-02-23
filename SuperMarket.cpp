@@ -272,7 +272,7 @@ int main()
     while (bandera == 1)
     {
         //limpiar_pantalla();
-        printf("----------------------PASO NUMERO %d--------------------\n", pasos);
+        printf("\n********************* PASO NUMERO %d *********************\n", pasos);
 
         accionesSistema();
 
