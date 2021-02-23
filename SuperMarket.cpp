@@ -344,6 +344,7 @@ void inicializarSimulacion()
 
     llenarPilaCarretas();
     generarCajas();
+    generarIds();
 
     printf("EL SISTEMA DE INICIALIZO CON LOS SIGUINTES PARAMETROS\n");
     printf("Numero de carretas: %d\nNumero de cajas: %d\n", contarCarretas(1) + contarCarretas(2), contarCajas());
@@ -378,7 +379,19 @@ void pausaDoble()
 }
 void accionesSistema()
 {
-    printf("Acciones del sistema\n");
+    int genCliente = getNumeroAleatorio(0,50)%5;
+    if(genCliente==0){
+        printf("Generar nuevo cliente\n");
+        int tmp = tomarId();
+
+        if(tmp != -1){
+            agregarColaEntrada(new cliente(tmp));
+            imprimirColaEntrada();
+        }else{
+            printf("Lugar ocupado\n");
+        }
+        
+    }
 }
 
 void llenarPilaCarretas()
