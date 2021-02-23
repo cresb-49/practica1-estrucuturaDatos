@@ -260,6 +260,7 @@ int main()
     short int bandera = 1;
     short int bandera2 = 1;
 
+
     while (bandera == 1)
     {
         limpiar_pantalla();
