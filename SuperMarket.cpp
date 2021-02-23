@@ -163,6 +163,43 @@ void caja::setAnterior(caja *_anterior)
 {
     anterior = _anterior;
 }
+///-------------------OBJETO ID
+class ID
+{
+private:
+    int id;
+    ID *siguiente;
+
+public:
+    ID(int);
+    ID();
+    int getId();
+    void setSiguiente(ID *);
+    ID *getSiguiente();
+};
+
+ID::ID()
+{
+}
+ID::ID(int _id)
+{
+    id = _id;
+}
+
+int ID::getId()
+{
+    return id;
+}
+
+void ID::setSiguiente(ID *_siguiente)
+{
+    siguiente = _siguiente;
+}
+
+ID *ID::getSiguiente()
+{
+    return siguiente;
+}
 
 ////SECCION DEL CODIGO PRINCIPAL DEL CODIGO
 int numCarretas = 0, numCajas = 0, pasos = 0;
@@ -172,6 +209,8 @@ carreta *pilaCarreta1, *pilaCarreta2;
 cliente *colaEntrada, *colaCobro, *compras;
 
 caja *cajas;
+
+ID *idClientes;
 
 //////DEFINICION DE METODOS DEL PROGRAMA
 
@@ -201,6 +240,12 @@ void imprimirColaEntrada();
 void imprimirColaCobro();
 //obtener numero aleatorio
 int getNumeroAleatorio(int inf, int sup);
+//metodos para la obtencion de ids
+void generarIds();
+int tomarId();
+void agregarId(int id);
+void imprimirIds();
+
 //////FIN DE DEFINICION DE METODOS DEL PROGRAMA
 
 int main()
@@ -318,14 +363,16 @@ void pausa()
              << "Precione Enter para continuar";
     } while (cin.get() != '\n');
 }
-void pausaDoble(){
+void pausaDoble()
+{
     do
     {
         cout << "";
     } while (cin.get() != '\n');
     do
     {
-        cout << '\n'<< "Precione Enter para continuar";
+        cout << '\n'
+             << "Precione Enter para continuar";
     } while (cin.get() != '\n');
 }
 void accionesSistema()
@@ -720,4 +767,64 @@ void imprimirColaCobro()
 int getNumeroAleatorio(int inf, int sup)
 {
     return (inf + rand() % (sup - inf));
+}
+
+void generarIds()
+{
+    for (int i = 100; i >= 0; i--)
+    {
+        agregarId(i);
+    }
+}
+
+int tomarId()
+{
+    if (idClientes == NULL)
+    {
+        printf("Error al tomar id para cliente\n");
+        return -1;
+    }
+    else
+    {
+        ID *tmp;
+        int val;
+        tmp = idClientes;
+        idClientes = tmp->getSiguiente();
+        val = tmp->getId();
+        free(tmp);
+        return val;
+    }
+}
+
+void agregarId(int id)
+{
+    if (idClientes == NULL)
+    {
+        idClientes = new ID(id);
+    }
+    else
+    {
+        ID *tmp, *tmp2;
+        tmp2 = new ID(id);
+        tmp = idClientes;
+        tmp2->setSiguiente(tmp);
+        idClientes = tmp2;
+    }
+}
+void imprimirIds()
+{
+    if (idClientes == NULL)
+    {
+        printf("Ids clientes vacia\n");
+    }
+    else
+    {
+        ID *tmp;
+        tmp = idClientes;
+        while (tmp != NULL)
+        {
+            printf("Id: %d\n", tmp->getId());
+            tmp = tmp->getSiguiente();
+        }
+    }
 }
