@@ -268,6 +268,7 @@ int main()
     string option;
     short int bandera = 1;
     short int bandera2 = 1;
+
     while (bandera == 1)
     {
         limpiar_pantalla();
@@ -397,10 +398,12 @@ void accionesSistema()
     //FIN LENAR CAJAS CON CLIENTES
 
     //SALIDA DE COMPRAS E INGRESO A COLA DE COBROS
-    numAle = getNumeroAleatorio(0,100);
-    if(compras != NULL){
+    numAle = getNumeroAleatorio(0, 100);
+    if (compras != NULL)
+    {
         tmpCliente = sacarCompras(numAle);
-        if(tmpCliente != NULL){
+        if (tmpCliente != NULL)
+        {
             agregarColaCobro(tmpCliente);
         }
     }
@@ -410,21 +413,27 @@ void accionesSistema()
     carreta *tmpCarreta;
     if (colaEntrada != NULL)
     {
-        if (pilaCarreta1 != NULL)
+        while ((pilaCarreta1 != NULL || pilaCarreta2 != NULL) && colaEntrada != NULL)
         {
-            tmpCliente = sacarColaEntrada();
-            tmpCarreta = tomarCarreta(1);
-            tmpCliente->setCarrito(tmpCarreta);
-            printf("El cliente %d toma la carreta %d y realizara sus compras\n",tmpCliente->getId(),tmpCarreta->getId());
-            agregarCompras(tmpCliente);
-        }
-        else if (pilaCarreta2 != NULL)
-        {
-            tmpCliente = sacarColaEntrada();
-            tmpCarreta = tomarCarreta(2);
-            tmpCliente->setCarrito(tmpCarreta);
-            printf("El cliente %d toma la carreta %d y realizara sus compras\n",tmpCliente->getId(),tmpCarreta->getId());
-            agregarCompras(tmpCliente);
+            if (colaEntrada != NULL)
+            {
+                if (pilaCarreta1 != NULL)
+                {
+                    tmpCliente = sacarColaEntrada();
+                    tmpCarreta = tomarCarreta(1);
+                    tmpCliente->setCarrito(tmpCarreta);
+                    printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
+                    agregarCompras(tmpCliente);
+                }
+                else if (pilaCarreta2 != NULL)
+                {
+                    tmpCliente = sacarColaEntrada();
+                    tmpCarreta = tomarCarreta(2);
+                    tmpCliente->setCarrito(tmpCarreta);
+                    printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
+                    agregarCompras(tmpCliente);
+                }
+            }
         }
     }
     ///FIN ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
@@ -437,7 +446,7 @@ void accionesSistema()
         int tmp = tomarId();
         if (tmp != -1)
         {
-            printf("Llega el cliente %d y se agrega a la cola de espera.\n",tmp);
+            printf("Llega el cliente %d y se agrega a la cola de espera.\n", tmp);
             agregarColaEntrada(new cliente(tmp));
             //imprimirColaEntrada();
         }
@@ -742,9 +751,10 @@ void llenarCajas()
         {
             if (tmp->getCliente() == NULL)
             {
-                if(colaCobro != NULL){
+                if (colaCobro != NULL)
+                {
                     tmpCliente = sacarColaCobro();
-                    printf("El cliente %d esta siendo atendido por la caja %d\n",tmpCliente->getId(),tmp->getId());
+                    printf("El cliente %d esta siendo atendido por la caja %d\n", tmpCliente->getId(), tmp->getId());
                     tmp->setCliente(tmpCliente);
                 }
             }
@@ -887,7 +897,7 @@ int getNumeroAleatorio(int inf, int sup)
 
 void generarIds()
 {
-    for (int i = 100; i >= 0; i--)
+    for (int i = 0; i <= 100; i++)
     {
         agregarId(i);
     }
@@ -904,9 +914,12 @@ int tomarId()
     {
         ID *tmp;
         int val;
+
         tmp = idClientes;
+
         idClientes = tmp->getSiguiente();
         val = tmp->getId();
+
         free(tmp);
         return val;
     }
@@ -922,9 +935,15 @@ void agregarId(int id)
     {
         ID *tmp, *tmp2;
         tmp2 = new ID(id);
+
         tmp = idClientes;
-        tmp2->setSiguiente(tmp);
-        idClientes = tmp2;
+
+        while (tmp->getSiguiente() != NULL)
+        {
+            tmp = tmp->getSiguiente();
+        }
+
+        tmp->setSiguiente(tmp2);
     }
 }
 void imprimirIds()
