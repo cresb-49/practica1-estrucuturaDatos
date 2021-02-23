@@ -232,9 +232,9 @@ void imprimirCajas();
 void cajaVacia();
 int contarCajas();
 ///acciones de colas de personas
-void agregarColaEntrada(cliente *cliente);
+void agregarColaEntrada(cliente *clien);
 cliente *sacarColaEntrada();
-void agregarColaCobro(cliente *cliente);
+void agregarColaCobro(cliente *clien);
 cliente *sacarColaCobro();
 void imprimirColaEntrada();
 void imprimirColaCobro();
@@ -245,6 +245,13 @@ void generarIds();
 int tomarId();
 void agregarId(int id);
 void imprimirIds();
+//acciones en lista de compras
+void agregarCompras(cliente *clien);
+cliente *sacarCompras(int id);
+cliente *retornarAnteriorCompras(int id);
+void imprimirCompras();
+//accion de eliminar cliente del super
+void eliminarCliente(cliente *client);
 
 //////FIN DE DEFINICION DE METODOS DEL PROGRAMA
 
@@ -259,8 +266,6 @@ int main()
     string option;
     short int bandera = 1;
     short int bandera2 = 1;
-
-
     while (bandera == 1)
     {
         limpiar_pantalla();
@@ -306,7 +311,6 @@ int main()
         } while (bandera2 == 1);
         pasos++;
     }
-
     return 0;
 }
 
@@ -379,17 +383,29 @@ void pausaDoble()
 }
 void accionesSistema()
 {
-    int genCliente = getNumeroAleatorio(0,50)%5;
-    if(genCliente==0){
+    int genCliente = getNumeroAleatorio(0, 50) % 5;
+    if (genCliente == 0)
+    {
         printf("Generar nuevo cliente\n");
         int tmp = tomarId();
-
-        if(tmp != -1){
+        if (tmp != -1)
+        {
+            printf("Llega el cliente %d y se agrega a la cola de espera.\n");
             agregarColaEntrada(new cliente(tmp));
             imprimirColaEntrada();
-        }else{
-            printf("Lugar ocupado\n");
         }
+    }
+    ///ACCION DE TOMA DE CARRETA
+    carreta *tmpCarreta = tomarCarreta(1);
+    cliente *tmp;
+    if(tmpCarreta == NULL){
+        tmpCarreta = tomarCarreta(2);
+        if(tmpCarreta == NULL){
+            //Ninguna Accion
+        }else{
+
+        }
+    }else{
         
     }
 }
@@ -484,8 +500,8 @@ carreta *tomarCarreta(int pila)
     }
     else
     {
-        printf("Error al tomar la carreta, ruta por defecto pila 1\n");
-        tomarCarreta(1);
+        //printf("Error al tomar la carreta, ruta por defecto pila 1\n");
+        //tomarCarreta(1);
     }
     return NULL;
 }
@@ -841,4 +857,122 @@ void imprimirIds()
             tmp = tmp->getSiguiente();
         }
     }
+}
+
+void agregarCompras(cliente *clien)
+{
+    if (compras == NULL)
+    {
+        compras = clien;
+        compras->setSiguinte(compras);
+    }
+    else
+    {
+        cliente *tmp;
+        tmp = compras->getSiguiente();
+        compras->setSiguinte(clien);
+        clien->setSiguinte(tmp);
+    }
+}
+cliente *sacarCompras(int id)
+{
+    if (compras == NULL)
+    {
+        printf("La lista de compras esta vacia\n");
+        return NULL;
+    }
+    else
+    {
+        cliente *tmp, *tmp2, *tmp3;
+
+        if (compras->getId() == id)
+        {
+            tmp = compras;
+            while (tmp->getSiguiente() != compras)
+            {
+                tmp = tmp->getSiguiente();
+            }
+            tmp2 = tmp->getSiguiente()->getSiguiente();
+            tmp3 = tmp->getSiguiente();
+            tmp->setSiguinte(tmp2);
+
+            if (tmp == tmp2 && tmp == tmp3)
+            {
+                compras = NULL;
+            }
+            else
+            {
+                compras = tmp2;
+            }
+            tmp3->setSiguinte(NULL);
+            return tmp3;
+        }
+        else
+        {
+            tmp = retornarAnteriorCompras(id);
+            if (tmp == NULL)
+            {
+                printf("No existe un cliente con el id %d\n", id);
+                return NULL;
+            }
+            else
+            {
+                tmp2 = tmp->getSiguiente()->getSiguiente();
+                tmp3 = tmp->getSiguiente();
+                tmp->setSiguinte(tmp2);
+                tmp3->setSiguinte(NULL);
+                return tmp3;
+            }
+        }
+    }
+}
+cliente *retornarAnteriorCompras(int id)
+{
+    if (compras == NULL)
+    {
+        return NULL;
+    }
+    else
+    {
+        cliente *tmp;
+        tmp = compras;
+        do
+        {
+            if (tmp->getSiguiente()->getId() == id)
+            {
+                return tmp;
+            }
+            tmp = tmp->getSiguiente();
+        } while (tmp != compras);
+        return NULL;
+    }
+}
+
+void imprimirCompras()
+{
+    cliente *tmp;
+    tmp = compras;
+    if (tmp == NULL)
+    {
+        printf("Lista de compras vacia\n");
+    }
+    else
+    {
+        do
+        {
+            printf("Cliente id: %d en compras\n", tmp->getId());
+            tmp = tmp->getSiguiente();
+        } while (tmp != compras);
+    }
+}
+
+void eliminarCliente(cliente *client){
+
+    printf("El cliente %d sale del sistema. Libera carreta %d y la caja %d\n",client->getId(),client->getCarrito()->getId(),0);
+
+    int ale = getNumeroAleatorio(1,2);
+    agregarCarreta(client->getCarrito(),ale);
+    client->setCarrito(NULL);
+    agregarId(client->getId());
+    free(client);
 }
