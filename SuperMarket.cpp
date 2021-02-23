@@ -1,8 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
+#include <time.h>
 
 using namespace std;
-
 
 //---------------------------------CLASE CARRETA-----------------------------------------------------
 class carreta{
@@ -147,21 +147,46 @@ caja *cajas;
 
 
 //////DEFINICION DE METODOS DEL PROGRAMA
+
+void inicializarSimulacion();
+
+//metodos de acciones con carretas
 void llenarPilaCarretas();
 void agregarCarreta(carreta *nuevaCarreta,int pila);
 carreta* tomarCarreta(int pila);
 void imprimirCarretas(int pila);
 int contarCarretas(int pila);
+//acciones de caja
 void generarCajas();
 void agregarCaja(caja *cajaNueva);
 void imprimirCajas();
 void cajaVacia();
+void contarCajas();
+///acciones de colas de personas
+void agregarColaEntrada(cliente *cliente);
+cliente* sacarColaEntrada();
+void agregarColaCobro(cliente *cliente);
+cliente* sacarColaCobro();
+void imprimirColaEntrada();
+void imprimirColaCobro();
+//obtener numero aleatorio
+int getNumeroAleatorio(int inf,int sup);
 //////FIN DE DEFINICION DE METODOS DEL PROGRAMA
 
 
 
 int main(){
+    //INICIALIZACION DE LOS NUMEROS ALEATORIOS
+    srand(time(NULL));
 
+    inicializarSimulacion();
+
+
+
+    return 0;
+}
+
+void inicializarSimulacion(){
     printf("Bienvenido a la simulacion de SuperMercado\n");
     //////////ASIGNACION DE DATOS DEL FUNCIONAMIENTO DEL PROGRAMA
     while (numCarretas == 0)
@@ -192,33 +217,13 @@ int main(){
         }
         
     }
-    ///////FIN DE PARAMETROS DE ASIGNACION
-    printf("El numero de carretas son: %d, el numero de cajas son: %d \n",numCarretas,numCajas);
 
-    //printf("El numero de carretas en pila 1 es: %d\n",contarCarretas(1));
-    //printf("El numero de carretas en pila 2 es: %d\n",contarCarretas(2));
-    
     llenarPilaCarretas();
     generarCajas();
 
-    cajaVacia();
+    printf("EL SISTEMA DE INICIALIZO CON LOS SIGUINTES PARAMETROS\n");
+    printf("Numero de carretas: %d\nNumero de cajas: %d\n",contarCarretas(1)+contarCarretas(2),numCajas);
 
-    //imprimirCajas();
-
-    //printf("El numero de carretas en pila 1 es: %d\n",contarCarretas(1));
-    //printf("El numero de carretas en pila 2 es: %d\n",contarCarretas(2));
-
-    imprimirCarretas(1);
-    imprimirCarretas(2);
-
-    agregarCarreta(tomarCarreta(1),2);
-
-    imprimirCarretas(1);
-    imprimirCarretas(2);
-
-
-
-    return 0;
 }
 
 void llenarPilaCarretas(){
@@ -421,4 +426,95 @@ void cajaVacia(){
         } while (tmp != cajas);
         
     }
+}
+void contarCajas(){
+    
+}
+
+void agregarColaEntrada(cliente *clien){
+    if(colaEntrada == NULL){
+        colaEntrada = clien;
+    }else{
+        cliente *tmp;
+        tmp = colaEntrada;
+        while (tmp->getSiguiente()!= NULL)
+        {
+            tmp = tmp->getSiguiente();
+        }
+        tmp->setSiguinte(clien);
+    }
+}
+
+cliente* sacarColaEntrada(){
+    if(colaEntrada == NULL){
+        printf("Cola de entrada vacia, no se puede sacar\n");
+        return NULL;
+    }else{
+        cliente *tmp;
+        tmp = colaEntrada;
+        colaEntrada = tmp->getSiguiente();
+        tmp->setSiguinte(NULL);
+        return tmp;
+    }
+}
+
+void agregarColaCobro(cliente *clien){
+    if(colaCobro == NULL){
+        colaCobro = clien;
+    }else{
+        cliente *tmp;
+        tmp = colaCobro;
+        while (tmp->getSiguiente()!= NULL)
+        {
+            tmp = tmp->getSiguiente();
+        }
+        tmp->setSiguinte(clien);
+    }
+}
+
+cliente* sacarColaCobro(){
+    if(colaCobro == NULL){
+        printf("Cola de cobro vacia, no se puede sacar\n");
+        return NULL;
+    }else{
+        cliente *tmp;
+        tmp = colaCobro;
+        colaCobro = tmp->getSiguiente();
+        tmp->setSiguinte(NULL);
+        return tmp;
+    }
+}
+
+void imprimirColaEntrada(){
+    if(colaEntrada==NULL){
+        printf("Cola de entrada vacia\n");
+    }else{
+        cliente *tmp;
+        tmp = colaEntrada;
+        while (tmp != NULL)
+        {
+            printf("Cliente id: %d esperando una carreta\n",tmp->getId());
+            tmp = tmp->getSiguiente();
+        }
+        
+    }
+}
+
+void imprimirColaCobro(){
+    if(colaCobro==NULL){
+        printf("Cola de cobro vacia\n");
+    }else{
+        cliente *tmp;
+        tmp = colaCobro;
+        while (tmp != NULL)
+        {
+            printf("Cliente id: %d esperando una caja\n",tmp->getId());
+            tmp = tmp->getSiguiente();
+        }
+        
+    }
+}
+
+int getNumeroAleatorio(int inf,int sup){
+    return (inf+rand()%(sup-inf));
 }
