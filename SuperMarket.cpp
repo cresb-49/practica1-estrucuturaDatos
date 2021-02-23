@@ -161,7 +161,7 @@ void generarCajas();
 void agregarCaja(caja *cajaNueva);
 void imprimirCajas();
 void cajaVacia();
-void contarCajas();
+int contarCajas();
 ///acciones de colas de personas
 void agregarColaEntrada(cliente *cliente);
 cliente* sacarColaEntrada();
@@ -222,7 +222,7 @@ void inicializarSimulacion(){
     generarCajas();
 
     printf("EL SISTEMA DE INICIALIZO CON LOS SIGUINTES PARAMETROS\n");
-    printf("Numero de carretas: %d\nNumero de cajas: %d\n",contarCarretas(1)+contarCarretas(2),numCajas);
+    printf("Numero de carretas: %d\nNumero de cajas: %d\n",contarCarretas(1)+contarCarretas(2),contarCajas());
 
 }
 
@@ -427,8 +427,21 @@ void cajaVacia(){
         
     }
 }
-void contarCajas(){
-    
+int contarCajas(){
+    if(cajas==NULL){
+        return 0;
+    }
+    else{
+        caja *tmp;
+        int cont=0;
+        tmp = cajas;
+        do
+        {
+            cont++;
+            tmp = tmp->getSiguiente();
+        } while (tmp != cajas);
+        return cont;
+    }
 }
 
 void agregarColaEntrada(cliente *clien){
