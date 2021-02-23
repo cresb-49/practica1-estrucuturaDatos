@@ -230,6 +230,8 @@ void generarCajas();
 void agregarCaja(caja *cajaNueva);
 void imprimirCajas();
 void cajaVacia();
+void vaciarCajas();
+void llenarCajas();
 int contarCajas();
 ///acciones de colas de personas
 void agregarColaEntrada(cliente *clien);
@@ -383,31 +385,64 @@ void pausaDoble()
 }
 void accionesSistema()
 {
-    int genCliente = getNumeroAleatorio(0, 50) % 5;
-    if (genCliente == 0)
+    int numAle;
+    cliente *tmpCliente;
+
+    //VACIAR CAJAS DEL SISTEMA
+    vaciarCajas();
+    //FIN VACIAR CAJAS DEL SISTEMA
+
+    //LLENAR CAJAS CON CLIENTES
+    llenarCajas();
+    //FIN LENAR CAJAS CON CLIENTES
+
+    //SALIDA DE COMPRAS E INGRESO A COLA DE COBROS
+    numAle = getNumeroAleatorio(0,100);
+    if(compras != NULL){
+        tmpCliente = sacarCompras(numAle);
+        if(tmpCliente != NULL){
+            agregarColaCobro(tmpCliente);
+        }
+    }
+    //FIN SALIDA DE COMPRAR E INGRESO A COLA DE COBROS
+
+    ///ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
+    carreta *tmpCarreta;
+    if (colaEntrada != NULL)
     {
-        printf("Generar nuevo cliente\n");
+        if (pilaCarreta1 != NULL)
+        {
+            tmpCliente = sacarColaEntrada();
+            tmpCarreta = tomarCarreta(1);
+            tmpCliente->setCarrito(tmpCarreta);
+            printf("El cliente %d toma la carreta %d y realizara sus compras\n",tmpCliente->getId(),tmpCarreta->getId());
+            agregarCompras(tmpCliente);
+        }
+        else if (pilaCarreta2 != NULL)
+        {
+            tmpCliente = sacarColaEntrada();
+            tmpCarreta = tomarCarreta(2);
+            tmpCliente->setCarrito(tmpCarreta);
+            printf("El cliente %d toma la carreta %d y realizara sus compras\n",tmpCliente->getId(),tmpCarreta->getId());
+            agregarCompras(tmpCliente);
+        }
+    }
+    ///FIN ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
+
+    //ENTRADA DE CLIENTE NUEVO AL SISTEMA Y COLA DE ENTRADA
+    numAle = getNumeroAleatorio(0, 50) % 5;
+    if (numAle == 0)
+    {
+        //printf("Generar nuevo cliente\n");
         int tmp = tomarId();
         if (tmp != -1)
         {
-            printf("Llega el cliente %d y se agrega a la cola de espera.\n");
+            printf("Llega el cliente %d y se agrega a la cola de espera.\n",tmp);
             agregarColaEntrada(new cliente(tmp));
-            imprimirColaEntrada();
+            //imprimirColaEntrada();
         }
     }
-    ///ACCION DE TOMA DE CARRETA
-    carreta *tmpCarreta = tomarCarreta(1);
-    cliente *tmp;
-    if(tmpCarreta == NULL){
-        tmpCarreta = tomarCarreta(2);
-        if(tmpCarreta == NULL){
-            //Ninguna Accion
-        }else{
-
-        }
-    }else{
-        
-    }
+    //ENTRADA DE CLIENTE NUEVO AL SISTEMA Y COLA DE ENTRADA
 }
 
 void llenarPilaCarretas()
@@ -668,6 +703,57 @@ void cajaVacia()
         } while (tmp != cajas);
     }
 }
+
+void vaciarCajas()
+{
+    if (cajas == NULL)
+    {
+        printf("Lista de cajas vacia\n");
+    }
+    else
+    {
+        caja *tmp;
+        tmp = cajas;
+        do
+        {
+            if (tmp->getCliente() != NULL)
+            {
+                printf("El cliente %d sale del sistema. Libera carreta %d y la caja %d\n", tmp->getCliente()->getId(), tmp->getCliente()->getCarrito()->getId(), tmp->getId());
+                eliminarCliente(tmp->getCliente());
+                tmp->setCliente(NULL);
+            }
+
+            tmp = tmp->getSiguiente();
+        } while (tmp != cajas);
+    }
+}
+void llenarCajas()
+{
+    if (cajas == NULL)
+    {
+        printf("Lista de cajas vacia\n");
+    }
+    else
+    {
+        caja *tmp;
+        cliente *tmpCliente;
+        tmp = cajas;
+        do
+        {
+            if (tmp->getCliente() == NULL)
+            {
+                if(colaCobro != NULL){
+                    tmpCliente = sacarColaCobro();
+                    printf("El cliente %d esta siendo atendido por la caja %d\n",tmpCliente->getId(),tmp->getId());
+                    tmp->setCliente(tmpCliente);
+                }
+            }
+
+            tmp = tmp->getSiguiente();
+        } while (tmp != cajas);
+    }
+}
+
 int contarCajas()
 {
     if (cajas == NULL)
@@ -912,7 +998,7 @@ cliente *sacarCompras(int id)
             tmp = retornarAnteriorCompras(id);
             if (tmp == NULL)
             {
-                printf("No existe un cliente con el id %d\n", id);
+                //printf("No existe un cliente con el id %d\n", id);
                 return NULL;
             }
             else
@@ -966,12 +1052,10 @@ void imprimirCompras()
     }
 }
 
-void eliminarCliente(cliente *client){
-
-    printf("El cliente %d sale del sistema. Libera carreta %d y la caja %d\n",client->getId(),client->getCarrito()->getId(),0);
-
-    int ale = getNumeroAleatorio(1,2);
-    agregarCarreta(client->getCarrito(),ale);
+void eliminarCliente(cliente *client)
+{
+    int ale = getNumeroAleatorio(1, 2);
+    agregarCarreta(client->getCarrito(), ale);
     client->setCarrito(NULL);
     agregarId(client->getId());
     free(client);
