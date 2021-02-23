@@ -107,13 +107,14 @@ class caja
 {
 private:
     int id;
+    int turnos;
     cliente *client;
     caja *siguiente;
     caja *anterior;
 
 public:
     caja();
-    caja(int id);
+    caja(int id,int turnos);
     int getId();
     cliente *getCliente();
     void setCliente(cliente *);
@@ -121,14 +122,17 @@ public:
     void setSiguinte(caja *);
     caja *getAnterior();
     void setAnterior(caja *);
+    void sumarTurnos();
+    int getTurnos();
 };
 
 caja::caja()
 {
 }
-caja::caja(int _id)
+caja::caja(int _id,int _turnos)
 {
     id = _id;
+    turnos = _turnos;
 }
 int caja::getId()
 {
@@ -162,6 +166,12 @@ caja *caja::getAnterior()
 void caja::setAnterior(caja *_anterior)
 {
     anterior = _anterior;
+}
+void caja::sumarTurnos(){
+    turnos = turnos + 1;
+}
+int caja::getTurnos(){
+    return turnos;
 }
 ///-------------------OBJETO ID
 class ID
@@ -648,7 +658,7 @@ void generarCajas()
 {
     for (int i = 1; i <= numCajas; i++)
     {
-        agregarCaja(new caja(i));
+        agregarCaja(new caja(i,0));
     }
 }
 
@@ -731,6 +741,7 @@ void vaciarCajas()
                 printf("El cliente %d sale del sistema. Libera carreta %d y la caja %d\n", tmp->getCliente()->getId(), tmp->getCliente()->getCarrito()->getId(), tmp->getId());
                 eliminarCliente(tmp->getCliente());
                 tmp->setCliente(NULL);
+                tmp->sumarTurnos();
             }
 
             tmp = tmp->getSiguiente();
@@ -1075,6 +1086,7 @@ void imprimirCompras()
 void eliminarCliente(cliente *client)
 {
     int ale = getNumeroAleatorio(1, 2);
+    printf("La carreta %d se ingreso en la pila %d\n",client->getCarrito()->getId(),ale);
     agregarCarreta(client->getCarrito(), ale);
     client->setCarrito(NULL);
     agregarId(client->getId());
