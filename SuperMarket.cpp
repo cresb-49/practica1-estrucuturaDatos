@@ -271,7 +271,7 @@ int main()
 
     while (bandera == 1)
     {
-        limpiar_pantalla();
+        //limpiar_pantalla();
         printf("----------------------PASO NUMERO %d--------------------\n", pasos);
 
         accionesSistema();
@@ -303,6 +303,7 @@ int main()
                 else
                 {
                     bandera2 = 1;
+                    printf("Error de opcion escriba la correcta\n");
                     limpiar_pantalla();
                 }
             }
