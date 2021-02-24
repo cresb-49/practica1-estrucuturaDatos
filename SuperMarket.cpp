@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <fstream>
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -114,7 +115,7 @@ private:
 
 public:
     caja();
-    caja(int id,int turnos);
+    caja(int id, int turnos);
     int getId();
     cliente *getCliente();
     void setCliente(cliente *);
@@ -129,7 +130,7 @@ public:
 caja::caja()
 {
 }
-caja::caja(int _id,int _turnos)
+caja::caja(int _id, int _turnos)
 {
     id = _id;
     turnos = _turnos;
@@ -167,10 +168,12 @@ void caja::setAnterior(caja *_anterior)
 {
     anterior = _anterior;
 }
-void caja::sumarTurnos(){
+void caja::sumarTurnos()
+{
     turnos = turnos + 1;
 }
-int caja::getTurnos(){
+int caja::getTurnos()
+{
     return turnos;
 }
 ///-------------------OBJETO ID
@@ -264,6 +267,14 @@ cliente *retornarAnteriorCompras(int id);
 void imprimirCompras();
 //accion de eliminar cliente del super
 void eliminarCliente(cliente *client);
+//PARAMETROS PARA GRAPHVIZ
+void ejecutarGraphviz();
+void escribirDot(string code);
+string generarParametrosCompras();
+string generarParametrosCarretas();
+string generarParametrosColaEspera();
+string generarParametrosColaPago();
+string generarParametrosCajas();
 
 //////FIN DE DEFINICION DE METODOS DEL PROGRAMA
 
@@ -325,6 +336,7 @@ int main()
         } while (bandera2 == 1);
         pasos++;
     }
+    ejecutarGraphviz();
     return 0;
 }
 
@@ -658,7 +670,7 @@ void generarCajas()
 {
     for (int i = 1; i <= numCajas; i++)
     {
-        agregarCaja(new caja(i,0));
+        agregarCaja(new caja(i, 0));
     }
 }
 
@@ -1086,9 +1098,195 @@ void imprimirCompras()
 void eliminarCliente(cliente *client)
 {
     int ale = getNumeroAleatorio(1, 2);
-    printf("La carreta %d se ingreso en la pila %d\n",client->getCarrito()->getId(),ale);
+    printf("La carreta %d se ingreso en la pila %d\n", client->getCarrito()->getId(), ale);
     agregarCarreta(client->getCarrito(), ale);
     client->setCarrito(NULL);
     agregarId(client->getId());
     free(client);
+}
+
+void ejecutarGraphviz(){
+    string codigo = "digraph estructuraDatos"+std::to_string(pasos)+" {\n"+
+                        "subgraph compras {\n"+
+                           "TCOM [shape = ellipse,style=bold,label = \"COMPRAS\",color=red];\n"+
+                           generarParametrosCompras()+
+                        "}\n"+
+                        "subgraph carretas{\n"+
+                            "subgraph pilas{\n"+
+                                "node [shape=record];\n"+
+                                generarParametrosCarretas()+
+                            "}\n"+
+                        "}\n"+
+                        "subgraph colaEspera{\n"+
+                            "TCE [shape = ellipse,style=bold,color=red,label = \"COLA DE ESPERA\"];\n"+
+                            generarParametrosColaEspera()+
+                        "}\n"+
+                        "subgraph colaCobro{\n"+
+                            "TC [shape = ellipse,style=bold,color=red,label = \"COLA PARA PAGAR\"];\n"+
+                            generarParametrosColaPago()+
+                        "}\n"+
+                        "subgraph cajas{\n"+
+                            "TCA [shape = ellipse,style=bold,color=red,label = \"CAJAS\"];\n"+
+                            generarParametrosCajas()+
+                        "}\n"+
+                    "}\n";
+    cout << codigo;
+
+    escribirDot(codigo);
+
+}
+void escribirDot(string code){
+    ofstream archivo;
+    archivo.open("estructura.dot",ios::out);
+    if(archivo.fail()){
+        cout << "No se pudo abrir/crear el archivo" << endl;
+    }else{
+        archivo << code;
+        archivo.close();
+    }
+}
+string generarParametrosCompras(){
+    string p1="",p2="",r1,r2,r3;
+    cliente *tmp;
+    tmp = compras;
+    if(tmp!=NULL){
+        do
+        {
+            r1 = std::to_string(tmp->getId());
+            r3 = std::to_string(tmp->getSiguiente()->getId());
+            r2 = std::to_string(tmp->getCarrito()->getId());
+
+            p1 = p1+"COM"+r1+" [shape = box,label = \"Cliente "+r1+"\\nCarreta "+r2+"\"];"+"\n";
+            p2 = p2+"COM"+r1+" -> COM"+r3+";"+"\n";
+
+            tmp = tmp->getSiguiente();
+        } while (tmp!=compras);
+    }else{
+        p1 = "COMT2 [shape = box,label = \"LISTA DE COMPRAS VACIA\"];\n";
+    }
+    
+    return p1+p2;
+}
+
+string generarParametrosCarretas(){
+    string p1="",r1="";
+    carreta *tmpC1,*tmpC2;
+    tmpC1 = pilaCarreta1;
+    tmpC2 = pilaCarreta2;
+
+    if(tmpC1!= NULL){
+        do
+        {
+            r1 = r1 + std::to_string(tmpC1->getId());
+            if(tmpC1->getSiguiente()!=NULL){
+                r1= r1+"|";
+            }
+            tmpC1=tmpC1->getSiguiente();
+        } while (tmpC1!=NULL);
+        p1 = p1+"TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];"+"\n";
+        p1 = p1 +"PILA1 [label=\"{"+r1+"}\"];"+"\n";
+        
+    }else{
+        p1 = p1+"TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];"+"\n";
+        p1 = p1 +"PILA1 [label=\"{||||}\"];"+"\n";
+    }
+    r1="";
+    if(tmpC2!= NULL){
+        do
+        {
+            r1 = r1 + std::to_string(tmpC2->getId());
+            if(tmpC2->getSiguiente()!=NULL){
+                r1= r1+"|";
+            }
+            tmpC2=tmpC2->getSiguiente();
+        } while (tmpC2!=NULL);
+
+        p1 = p1+"TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];"+"\n";
+        p1 = p1 +"PILA2 [label=\"{"+r1+"}\"];"+"\n";
+    }else{
+        p1 = p1+"TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];"+"\n";
+        p1 = p1 +"PILA2 [label=\"{||||}\"];"+"\n";
+    }
+    return p1;
+}
+
+string generarParametrosColaEspera(){
+    string p1="",p2="",r1="",r2="";
+    cliente *tmp;
+    tmp = colaEntrada;
+
+    if(tmp!=NULL){
+        do
+        {   
+            r1 = std::to_string(tmp->getId());
+            p1 = p1 +"COLE"+r1+"[shape = box,label=\"Cliente "+r1+"\"];"+"\n";
+
+            if(tmp->getSiguiente()!=NULL){
+                r2 = std::to_string(tmp->getSiguiente()->getId());
+                p2 = p2 +"COLE"+r1+" -> COLE"+r2+";"+"\n";
+            }
+            
+            tmp = tmp->getSiguiente();
+        } while (tmp!=NULL);
+        
+    }else{
+        p1 = "TCE2 [shape = box,label = \"COLA DE ESPERA VACIA\"];\n";
+    }
+    return p1+p2;
+}
+string generarParametrosColaPago(){
+    string p1="",p2="",r1="",r2="";
+    cliente *tmp;
+    tmp = colaCobro;
+
+    if(tmp!=NULL){
+        do
+        {   
+            r1 = std::to_string(tmp->getId());
+            p1 = p1 +"COLC"+r1+"[shape = box,label=\"Cliente "+r1+"\"];"+"\n";
+
+            if(tmp->getSiguiente()!=NULL){
+                r2 = std::to_string(tmp->getSiguiente()->getId());
+                p2 = p2 +"COLC"+r1+" -> COLC"+r2+";"+"\n";
+            }
+            tmp = tmp->getSiguiente();
+        } while (tmp!=NULL);
+    }else{
+        p1 = "TC2 [shape = box,label = \"COLA PARA PAGAR VACIA\"];\n";
+    }
+
+    return p1+p2;
+}
+string generarParametrosCajas(){
+    string p1="",p2="",r1="",r2="",r3="",r4="",r5="";
+    caja *tmp;
+    tmp = cajas;
+
+    if(cajas!=NULL){
+        do
+        {
+            r1 = std::to_string(tmp->getId());
+            r2 = std::to_string(tmp->getTurnos());
+
+            if(tmp->getCliente()!=NULL){
+                r3 = "Ocupada";
+            }else{
+                r3 = "Libre";
+            }
+
+            r4 = std::to_string(tmp->getAnterior()->getId());
+            r5 = std::to_string(tmp->getSiguiente()->getId());
+
+            p1 = p1 +"CAJA"+r1+" [shape = box,label = \"Caja "+r1+"\\n"+r2+" Turnos\\n"+r3+"\"];" +"\n";
+
+            p2 = p2 +"CAJA"+r1+" -> CAJA"+r4+";"+"\n";
+            p2 = p2 +"CAJA"+r1+" -> CAJA"+r5+";"+"\n";
+
+
+
+            tmp = tmp->getSiguiente();
+        } while (tmp!=cajas);
+        
+    }
+    return p1+p2;
 }
