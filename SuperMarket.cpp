@@ -22,6 +22,7 @@ public:
     carreta *getSiguiente();
     void setCarreta(carreta *);
     int getId();
+    string getIdS();
 };
 
 carreta::carreta(int _id)
@@ -46,6 +47,10 @@ int carreta::getId()
     return id;
 }
 
+string carreta::getIdS()
+{
+    return to_string(id);
+}
 //----------------------------CLASE CLIENTE-------------------------------------------------------
 class cliente
 {
@@ -59,6 +64,7 @@ public:
     cliente(int);
     cliente();
     int getId();
+    string getIdS();
     void setId(int);
     carreta *getCarrito();
     void setCarrito(carreta *);
@@ -81,6 +87,10 @@ void cliente::setId(int _id)
 int cliente::getId()
 {
     return id;
+}
+string cliente::getIdS()
+{
+    return to_string(id);
 }
 
 void cliente::setCarrito(carreta *_carrito)
@@ -215,7 +225,7 @@ ID *ID::getSiguiente()
 }
 
 ////SECCION DEL CODIGO PRINCIPAL DEL CODIGO
-int numCarretas = 0, numCajas = 0, pasos = 0;
+int numCarretas = 0, numCajas = 0, pasos = 0,ingreso=0;
 string reader;
 
 carreta *pilaCarreta1, *pilaCarreta2;
@@ -271,6 +281,8 @@ void eliminarCliente(cliente *client);
 void ejecutarGraphviz();
 void escribirDot(string code);
 string generarParametrosCompras();
+string paramCompra(cliente *compra);
+string paramCompra2(cliente *compra);
 string generarParametrosCarretas();
 string generarParametrosColaEspera();
 string generarParametrosColaPago();
@@ -296,7 +308,6 @@ int main()
         printf("\n********************* PASO NUMERO %d *********************\n", pasos);
 
         accionesSistema();
-
         do
         {
             printf("Desea continuar la simulacion? y/n: ");
@@ -309,6 +320,7 @@ int main()
                 }
                 else if (reader == "Y")
                 {
+                    
                     bandera2 = 0;
                 }
                 else if (reader == "n")
@@ -334,8 +346,10 @@ int main()
             }
 
         } while (bandera2 == 1);
+
         pasos++;
     }
+    pasos--;
     ejecutarGraphviz();
     return 0;
 }
@@ -369,6 +383,20 @@ void inicializarSimulacion()
         catch (const std::exception &e)
         {
             std::cerr << "Cantidad de ingreso invalida" << '\n';
+        }
+    }
+    ingreso = -1;
+    while (ingreso < 0)
+    {
+        printf("Cuantas personas ingresaran en el turno: ");
+        cin >> reader;
+        try
+        {
+            ingreso = std::stoi(reader);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Cantidad de ingreso invalida!!" << '\n';
         }
     }
 
@@ -434,36 +462,36 @@ void accionesSistema()
 
     ///ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
     carreta *tmpCarreta;
-    if (colaEntrada != NULL)
+
+    while (colaEntrada != NULL)
     {
-        while ((pilaCarreta1 != NULL || pilaCarreta2 != NULL) && colaEntrada != NULL)
+        if (pilaCarreta1 != NULL)
         {
-            if (colaEntrada != NULL)
-            {
-                if (pilaCarreta1 != NULL)
-                {
-                    tmpCliente = sacarColaEntrada();
-                    tmpCarreta = tomarCarreta(1);
-                    tmpCliente->setCarrito(tmpCarreta);
-                    printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
-                    agregarCompras(tmpCliente);
-                }
-                else if (pilaCarreta2 != NULL)
-                {
-                    tmpCliente = sacarColaEntrada();
-                    tmpCarreta = tomarCarreta(2);
-                    tmpCliente->setCarrito(tmpCarreta);
-                    printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
-                    agregarCompras(tmpCliente);
-                }
+            tmpCarreta = tomarCarreta(1);
+            if(tmpCarreta != NULL){
+                tmpCliente = sacarColaEntrada();
+                tmpCliente->setCarrito(tmpCarreta);
+                printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
+                agregarCompras(tmpCliente);
             }
+        }
+        else if (pilaCarreta2 != NULL)
+        {
+            tmpCarreta = tomarCarreta(2);
+            if(tmpCarreta != NULL){
+                tmpCliente = sacarColaEntrada();
+                tmpCliente->setCarrito(tmpCarreta);
+                printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
+                agregarCompras(tmpCliente);
+            }
+        }else{
+            break;
         }
     }
     ///FIN ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
 
     //ENTRADA DE CLIENTE NUEVO AL SISTEMA Y COLA DE ENTRADA
-    numAle = getNumeroAleatorio(0, 50) % 5;
-    if (numAle == 0)
+    for (int i = 0; i < ingreso; i++)
     {
         //printf("Generar nuevo cliente\n");
         int tmp = tomarId();
@@ -472,9 +500,25 @@ void accionesSistema()
             printf("Llega el cliente %d y se agrega a la cola de espera.\n", tmp);
             agregarColaEntrada(new cliente(tmp));
             //imprimirColaEntrada();
-        }
+        }   
     }
     //ENTRADA DE CLIENTE NUEVO AL SISTEMA Y COLA DE ENTRADA
+    //ENTRADA DE PROXIMAS PERSONAS
+    ingreso = -1;
+    while (ingreso < 0)
+    {
+        printf("Cuantas personas ingresaran en el turno: ");
+        cin >> reader;
+        try
+        {
+            ingreso = std::stoi(reader);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Cantidad de ingreso invalida!!" << '\n';
+        }
+    }
+    //FIN ENTRADA DE PROXIMAS PERSONAS
 }
 
 void llenarPilaCarretas()
@@ -540,12 +584,20 @@ carreta *tomarCarreta(int pila)
         if (pilaCarreta1 == NULL)
         {
             printf("Error al tomar la carreta pila 1 vacia\n");
+            return NULL;
         }
         else
         {
             carreta *tmp;
             tmp = pilaCarreta1;
-            pilaCarreta1 = tmp->getSiguiente();
+
+            if(tmp->getSiguiente()==NULL){
+                pilaCarreta1 = NULL;
+            }
+            else
+            {
+                pilaCarreta1 = tmp->getSiguiente();
+            }
             tmp->setCarreta(NULL);
             return tmp;
         }
@@ -555,20 +607,22 @@ carreta *tomarCarreta(int pila)
         if (pilaCarreta2 == NULL)
         {
             printf("Error al tomar la carreta pila 2 vacia\n");
+            return NULL;
         }
         else
         {
             carreta *tmp;
             tmp = pilaCarreta2;
-            pilaCarreta2 = tmp->getSiguiente();
+            if(tmp->getSiguiente()==NULL){
+                pilaCarreta2 = NULL;
+            }
+            else
+            {
+                pilaCarreta2 = tmp->getSiguiente();
+            }
             tmp->setCarreta(NULL);
             return tmp;
         }
-    }
-    else
-    {
-        //printf("Error al tomar la carreta, ruta por defecto pila 1\n");
-        //tomarCarreta(1);
     }
     return NULL;
 }
@@ -1105,8 +1159,10 @@ void eliminarCliente(cliente *client)
     free(client);
 }
 
-void ejecutarGraphviz(){
+void ejecutarGraphviz()
+{
     string codigo = "digraph estructuraDatos"+std::to_string(pasos)+" {\n"+
+                        "PT [shape = box,style=bold,label = \"INDICADOR DE GRAFICA SEGUN PASOS:\\nPaso: "+std::to_string(pasos)+"\",color=red];"+
                         "subgraph compras {\n"+
                            "TCOM [shape = ellipse,style=bold,label = \"COMPRAS\",color=red];\n"+
                            generarParametrosCompras()+
@@ -1130,34 +1186,41 @@ void ejecutarGraphviz(){
                             generarParametrosCajas()+
                         "}\n"+
                     "}\n";
-    cout << codigo;
 
     escribirDot(codigo);
-
-}
-void escribirDot(string code){
-    ofstream archivo;
-    archivo.open("estructura.dot",ios::out);
-    if(archivo.fail()){
-        cout << "No se pudo abrir/crear el archivo" << endl;
+    //EJECUCION DE DOT EN LINUX
+    int respuesta = system("dot -Tpng -O estructura.dot");
+    if(respuesta == 0){
+        printf("EL diagrama se genero exitosamente\n");
     }else{
+        printf("Error en generar diagrama, verifique las variables del sistema, el programa fue programado para LINUX\n");
+    }
+}
+void escribirDot(string code)
+{
+    ofstream archivo;
+    archivo.open("estructura.dot", ios::out);
+    if (archivo.fail())
+    {
+        cout << "No se pudo abrir/crear el archivo" << endl;
+    }
+    else
+    {
         archivo << code;
         archivo.close();
     }
 }
-string generarParametrosCompras(){
-    string p1="",p2="",r1,r2,r3;
+string generarParametrosCompras()
+{
+    string p1="",p2="";
     cliente *tmp;
     tmp = compras;
     if(tmp!=NULL){
         do
         {
-            r1 = std::to_string(tmp->getId());
-            r3 = std::to_string(tmp->getSiguiente()->getId());
-            r2 = std::to_string(tmp->getCarrito()->getId());
 
-            p1 = p1+"COM"+r1+" [shape = box,label = \"Cliente "+r1+"\\nCarreta "+r2+"\"];"+"\n";
-            p2 = p2+"COM"+r1+" -> COM"+r3+";"+"\n";
+            p1 = p1+"COM"+tmp->getIdS()+" [shape = box,label = \"Cliente "+tmp->getIdS()+"\\nCarreta "+tmp->getCarrito()->getIdS()+"\"];"+"\n";
+            p2 = p2+"COM"+tmp->getIdS()+" -> COM"+tmp->getSiguiente()->getIdS()+";"+"\n";
 
             tmp = tmp->getSiguiente();
         } while (tmp!=compras);
@@ -1168,125 +1231,144 @@ string generarParametrosCompras(){
     return p1+p2;
 }
 
-string generarParametrosCarretas(){
-    string p1="",r1="";
-    carreta *tmpC1,*tmpC2;
+string generarParametrosCarretas()
+{
+    string p1 = "", r1 = "";
+    carreta *tmpC1, *tmpC2;
     tmpC1 = pilaCarreta1;
     tmpC2 = pilaCarreta2;
 
-    if(tmpC1!= NULL){
+    if (tmpC1 != NULL)
+    {
         do
         {
             r1 = r1 + std::to_string(tmpC1->getId());
-            if(tmpC1->getSiguiente()!=NULL){
-                r1= r1+"|";
+            if (tmpC1->getSiguiente() != NULL)
+            {
+                r1 = r1 + "|";
             }
-            tmpC1=tmpC1->getSiguiente();
-        } while (tmpC1!=NULL);
-        p1 = p1+"TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];"+"\n";
-        p1 = p1 +"PILA1 [label=\"{"+r1+"}\"];"+"\n";
-        
-    }else{
-        p1 = p1+"TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];"+"\n";
-        p1 = p1 +"PILA1 [label=\"{||||}\"];"+"\n";
+            tmpC1 = tmpC1->getSiguiente();
+        } while (tmpC1 != NULL);
+        p1 = p1 + "TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];" + "\n";
+        p1 = p1 + "PILA1 [label=\"{" + r1 + "}\"];" + "\n";
     }
-    r1="";
-    if(tmpC2!= NULL){
+    else
+    {
+        p1 = p1 + "TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];" + "\n";
+        p1 = p1 + "PILA1 [label=\"{||||}\"];" + "\n";
+    }
+    r1 = "";
+    if (tmpC2 != NULL)
+    {
         do
         {
             r1 = r1 + std::to_string(tmpC2->getId());
-            if(tmpC2->getSiguiente()!=NULL){
-                r1= r1+"|";
+            if (tmpC2->getSiguiente() != NULL)
+            {
+                r1 = r1 + "|";
             }
-            tmpC2=tmpC2->getSiguiente();
-        } while (tmpC2!=NULL);
+            tmpC2 = tmpC2->getSiguiente();
+        } while (tmpC2 != NULL);
 
-        p1 = p1+"TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];"+"\n";
-        p1 = p1 +"PILA2 [label=\"{"+r1+"}\"];"+"\n";
-    }else{
-        p1 = p1+"TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];"+"\n";
-        p1 = p1 +"PILA2 [label=\"{||||}\"];"+"\n";
+        p1 = p1 + "TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];" + "\n";
+        p1 = p1 + "PILA2 [label=\"{" + r1 + "}\"];" + "\n";
+    }
+    else
+    {
+        p1 = p1 + "TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];" + "\n";
+        p1 = p1 + "PILA2 [label=\"{||||}\"];" + "\n";
     }
     return p1;
 }
 
-string generarParametrosColaEspera(){
-    string p1="",p2="",r1="",r2="";
+string generarParametrosColaEspera()
+{
+    string p1 = "", p2 = "", r1 = "", r2 = "";
     cliente *tmp;
     tmp = colaEntrada;
 
-    if(tmp!=NULL){
+    if (tmp != NULL)
+    {
         do
-        {   
+        {
             r1 = std::to_string(tmp->getId());
-            p1 = p1 +"COLE"+r1+"[shape = box,label=\"Cliente "+r1+"\"];"+"\n";
+            p1 = p1 + "COLE" + r1 + "[shape = box,label=\"Cliente " + r1 + "\"];" + "\n";
 
-            if(tmp->getSiguiente()!=NULL){
+            if (tmp->getSiguiente() != NULL)
+            {
                 r2 = std::to_string(tmp->getSiguiente()->getId());
-                p2 = p2 +"COLE"+r1+" -> COLE"+r2+";"+"\n";
+                p2 = p2 + "COLE" + r1 + " -> COLE" + r2 + ";" + "\n";
             }
-            
+
             tmp = tmp->getSiguiente();
-        } while (tmp!=NULL);
-        
-    }else{
+        } while (tmp != NULL);
+    }
+    else
+    {
         p1 = "TCE2 [shape = box,label = \"COLA DE ESPERA VACIA\"];\n";
     }
-    return p1+p2;
+    return p1 + p2;
 }
-string generarParametrosColaPago(){
-    string p1="",p2="",r1="",r2="";
+string generarParametrosColaPago()
+{
+    string p1 = "", p2 = "", r1 = "", r2 = "";
     cliente *tmp;
     tmp = colaCobro;
 
-    if(tmp!=NULL){
+    if (tmp != NULL)
+    {
         do
-        {   
+        {
             r1 = std::to_string(tmp->getId());
-            p1 = p1 +"COLC"+r1+"[shape = box,label=\"Cliente "+r1+"\"];"+"\n";
+            p1 = p1 + "COLC" + r1 + "[shape = box,label=\"Cliente " + r1 + "\"];" + "\n";
 
-            if(tmp->getSiguiente()!=NULL){
+            if (tmp->getSiguiente() != NULL)
+            {
                 r2 = std::to_string(tmp->getSiguiente()->getId());
-                p2 = p2 +"COLC"+r1+" -> COLC"+r2+";"+"\n";
+                p2 = p2 + "COLC" + r1 + " -> COLC" + r2 + ";" + "\n";
             }
             tmp = tmp->getSiguiente();
-        } while (tmp!=NULL);
-    }else{
+        } while (tmp != NULL);
+    }
+    else
+    {
         p1 = "TC2 [shape = box,label = \"COLA PARA PAGAR VACIA\"];\n";
     }
 
-    return p1+p2;
+    return p1 + p2;
 }
-string generarParametrosCajas(){
-    string p1="",p2="",r1="",r2="",r3="",r4="",r5="";
+string generarParametrosCajas()
+{
+    string p1 = "", p2 = "", r1 = "", r2 = "", r3 = "", r4 = "", r5 = "";
     caja *tmp;
     tmp = cajas;
 
-    if(cajas!=NULL){
+    if (cajas != NULL)
+    {
         do
         {
             r1 = std::to_string(tmp->getId());
             r2 = std::to_string(tmp->getTurnos());
 
-            if(tmp->getCliente()!=NULL){
+            if (tmp->getCliente() != NULL)
+            {
                 r3 = "Ocupada";
-            }else{
+            }
+            else
+            {
                 r3 = "Libre";
             }
 
             r4 = std::to_string(tmp->getAnterior()->getId());
             r5 = std::to_string(tmp->getSiguiente()->getId());
 
-            p1 = p1 +"CAJA"+r1+" [shape = box,label = \"Caja "+r1+"\\n"+r2+" Turnos\\n"+r3+"\"];" +"\n";
+            p1 = p1 + "CAJA" + r1 + " [shape = box,label = \"Caja " + r1 + "\\n" + r2 + " Turnos\\n" + r3 + "\"];" + "\n";
 
-            p2 = p2 +"CAJA"+r1+" -> CAJA"+r4+";"+"\n";
-            p2 = p2 +"CAJA"+r1+" -> CAJA"+r5+";"+"\n";
-
-
+            p2 = p2 + "CAJA" + r1 + " -> CAJA" + r4 + ";" + "\n";
+            p2 = p2 + "CAJA" + r1 + " -> CAJA" + r5 + ";" + "\n";
 
             tmp = tmp->getSiguiente();
-        } while (tmp!=cajas);
-        
+        } while (tmp != cajas);
     }
-    return p1+p2;
+    return p1 + p2;
 }
