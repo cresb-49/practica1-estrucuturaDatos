@@ -164,7 +164,7 @@ void acciones()
     llenarCajas();
 
     int ale = getNumeroAleatorio(0, 100);
-    printf("Numero aleatorio generado: %d\n", ale);
+    //printf("Numero aleatorio generado: %d\n", ale);
     if (compras != NULL)
     {
         cliente *tmp = salirDeCompras(ale);
@@ -217,18 +217,18 @@ void acciones()
     }
 
     //
-    printf("-------------- MOVIMIENTO DE LOS DATOS ------------\n");
-    printf("-- CAJAS --\n");
+    //printf("-------------- MOVIMIENTO DE LOS DATOS ------------\n");
+    //printf("-- CAJAS --\n");
     imprimirCajas();
-    printf("-- COBROS --\n");
+    //printf("-- COBROS --\n");
     imprimirColaCobro();
-    printf("-- ESPERA --\n");
+    //printf("-- ESPERA --\n");
     imprimirColaEspera();
-    printf("-- COMPRAS --\n");
+    //printf("-- COMPRAS --\n");
     imprimirCompras();
-    printf("-- CARRETAS --\n");
+    //printf("-- CARRETAS --\n");
     mostrarCarretas();
-    printf("-------------- FIN MOVIMIENTO DE LOS DATOS ------------\n");
+    //printf("-------------- FIN MOVIMIENTO DE LOS DATOS ------------\n");
     //
     ejecutarGraphviz();
     pasos++;
@@ -309,7 +309,7 @@ void mostrarCarretas()
         reader = "";
         do
         {
-            printf("Carreta id: %d en pila 1, Atras: %d\n", aux->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
+            //printf("Carreta id: %d en pila 1, Atras: %d\n", aux->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
             reader = reader + std::to_string(aux->id);
             if(aux->siguiente!=NULL){
                 reader = reader + "|";
@@ -332,7 +332,7 @@ void mostrarCarretas()
         reader="";
         do
         {
-            printf("Carreta id: %d en pila 2, Atras: %d\n", aux2->id, (aux2->siguiente == NULL) ? -1 : aux2->siguiente->id);
+            //printf("Carreta id: %d en pila 2, Atras: %d\n", aux2->id, (aux2->siguiente == NULL) ? -1 : aux2->siguiente->id);
 
             reader = reader + std::to_string(aux2->id);
             if(aux2->siguiente!=NULL){
@@ -435,7 +435,7 @@ void imprimirColaEspera()
     {
         do
         {
-            printf("Cliente id: %d, esperando en entrada, atras: %d\n", aux->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
+            //printf("Cliente id: %d, esperando en entrada, atras: %d\n", aux->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
             reader = "";
             reader = "COLE" + std::to_string(aux->id) + "[shape = box,label=\"Cliente " + std::to_string(aux->id) + "\"];" + "\n";
             ParamColaEspera = ParamColaEspera + reader;
@@ -450,7 +450,7 @@ void imprimirColaEspera()
     }
     else
     {
-        printf("Cola de espera vacia\n");
+        //printf("Cola de espera vacia\n");
         ParamColaEspera = "TCE2 [shape = box,label = \"COLA DE ESPERA VACIA\"];\n";
     }
 }
@@ -497,7 +497,7 @@ void imprimirColaCobro()
     {
         do
         {
-            printf("Cliente id: %d, con carreta: %d, esperando a ser atendido, atras: %d\n", aux->id, aux->carrito->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
+            //printf("Cliente id: %d, con carreta: %d, esperando a ser atendido, atras: %d\n", aux->id, aux->carrito->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
             reader = "";
             reader = "COLC" + std::to_string(aux->id) + "[shape = box,label=\"Cliente " + std::to_string(aux->id) + "\"];" + "\n";
             ParamColaCobro = ParamColaCobro + reader;
@@ -512,7 +512,7 @@ void imprimirColaCobro()
     }
     else
     {
-        printf("Cola de cobro vacia\n");
+        //printf("Cola de cobro vacia\n");
         ParamColaCobro = "TC2 [shape = box,label = \"COLA PARA PAGAR VACIA\"];\n";
     }
 }
@@ -576,7 +576,7 @@ cliente *salirDeCompras(int id)
         }
         else
         {
-            printf("No existe un elemento con el id ingresado\n");
+            //printf("No existe un elemento con el id ingresado\n");
             return NULL;
         }
     }
@@ -589,14 +589,14 @@ void imprimirCompras()
 
     if (tmp == NULL)
     {
-        printf("Lista de compras vacia\n");
+        //printf("Lista de compras vacia\n");
         Nsc = "COMT2 [shape = box,label = \"LISTA DE COMPRAS VACIA\"];\n";
     }
     else
     {
         do
         {
-            printf("Cliente id: %d, con carreta id: %d,en compras, siguinte: %d\n", tmp->id, tmp->carrito->id, tmp->siguiente->id);
+            //printf("Cliente id: %d, con carreta id: %d,en compras, siguinte: %d\n", tmp->id, tmp->carrito->id, tmp->siguiente->id);
             reader = "";
             reader = "COM" + std::to_string(tmp->id) + " [shape = box,label = \"Cliente " + std::to_string(tmp->id) + "\\nCarreta " + std::to_string(tmp->carrito->id) + "\"];" + "\n";
             Nsc = Nsc + reader;
@@ -641,7 +641,7 @@ void imprimirCajas()
     {
         while (tmp != NULL)
         {
-            printf("Caja id: %d, turnos: %d, Estado: %s, Anterior: %d, Siguinte %d\n", tmp->id, tmp->turnos, (tmp->client == NULL) ? "Libre" : "Ocupado", (tmp->anterior == NULL) ? -1 : tmp->anterior->id, (tmp->siguiente == NULL) ? -1 : tmp->siguiente->id);
+            //printf("Caja id: %d, turnos: %d, Estado: %s, Anterior: %d, Siguinte %d\n", tmp->id, tmp->turnos, (tmp->client == NULL) ? "Libre" : "Ocupado", (tmp->anterior == NULL) ? -1 : tmp->anterior->id, (tmp->siguiente == NULL) ? -1 : tmp->siguiente->id);
 
             reader = "";
             reader = "CAJA" + std::to_string(tmp->id) + " [shape = box,label = \"Caja " + std::to_string(tmp->id) + "\\n" + std::to_string(tmp->turnos) + " Turnos\\n" + ((tmp->client == NULL) ? "Libre" : "Ocupado") + "\"];" + "\n";
@@ -663,7 +663,7 @@ void imprimirCajas()
     }
     else
     {
-        printf("Lista de Cajas vacia\n");
+        //printf("Lista de Cajas vacia\n");
     }
 }
 void vaciarCajas()
@@ -693,7 +693,7 @@ void vaciarCajas()
                 else
                 {
                     agregarCarreta(pilaCarreta2, aux->carrito->id);
-                    printf("Carrito %d entra en la pila 1\n", aux->carrito->id);
+                    printf("Carrito %d entra en la pila 2\n", aux->carrito->id);
                     delete aux->carrito;
                     delete aux;
                 }
