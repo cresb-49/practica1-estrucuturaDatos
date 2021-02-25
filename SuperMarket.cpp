@@ -9,294 +9,104 @@
 
 using namespace std;
 
-//---------------------------------CLASE CARRETA-----------------------------------------------------
-class carreta
+struct carreta
 {
-private:
     int id;
-    carreta *siguinte;
-
-public:
-    carreta(int);
-    carreta();
-    carreta *getSiguiente();
-    void setCarreta(carreta *);
-    int getId();
-    string getIdS();
+    carreta *siguiente;
 };
 
-carreta::carreta(int _id)
+struct cliente
 {
-    id = _id;
-}
-carreta::carreta()
-{
-}
-carreta *carreta::getSiguiente()
-{
-    return siguinte;
-}
-
-void carreta::setCarreta(carreta *_siguinte)
-{
-    siguinte = _siguinte;
-}
-
-int carreta::getId()
-{
-    return id;
-}
-
-string carreta::getIdS()
-{
-    return to_string(id);
-}
-//----------------------------CLASE CLIENTE-------------------------------------------------------
-class cliente
-{
-private:
     int id;
     carreta *carrito;
-    cliente *anterior;
     cliente *siguiente;
-
-public:
-    cliente(int);
-    cliente();
-    int getId();
-    string getIdS();
-    void setId(int);
-    carreta *getCarrito();
-    void setCarrito(carreta *);
-    cliente *getSiguiente();
-    void setSiguinte(cliente *);
+    cliente *anterior;
 };
 
-cliente::cliente(int _id)
+struct caja
 {
-    id = _id;
-}
-cliente::cliente()
-{
-}
-void cliente::setId(int _id)
-{
-    id = _id;
-}
-
-int cliente::getId()
-{
-    return id;
-}
-string cliente::getIdS()
-{
-    return to_string(id);
-}
-
-void cliente::setCarrito(carreta *_carrito)
-{
-    carrito = _carrito;
-}
-
-carreta *cliente::getCarrito()
-{
-    return carrito;
-}
-
-cliente *cliente::getSiguiente()
-{
-    return siguiente;
-}
-
-void cliente::setSiguinte(cliente *_siguiente)
-{
-    siguiente = _siguiente;
-}
-
-//--------------- OBJETO CAJA -------------------------------
-class caja
-{
-private:
     int id;
-    int turnos;
-    cliente *client;
-    caja *siguiente;
     caja *anterior;
-
-public:
-    caja();
-    caja(int id, int turnos);
-    int getId();
-    cliente *getCliente();
-    void setCliente(cliente *);
-    caja *getSiguiente();
-    void setSiguinte(caja *);
-    caja *getAnterior();
-    void setAnterior(caja *);
-    void sumarTurnos();
-    int getTurnos();
+    caja *siguiente;
+    cliente *client;
+    int turnos;
 };
 
-caja::caja()
+struct ID
 {
-}
-caja::caja(int _id, int _turnos)
-{
-    id = _id;
-    turnos = _turnos;
-}
-int caja::getId()
-{
-    return id;
-}
-cliente *caja::getCliente()
-{
-    return client;
-}
-
-void caja::setCliente(cliente *_client)
-{
-    client = _client;
-}
-
-caja *caja::getSiguiente()
-{
-    return siguiente;
-}
-
-void caja::setSiguinte(caja *_siguiente)
-{
-    siguiente = _siguiente;
-}
-
-caja *caja::getAnterior()
-{
-    return anterior;
-}
-
-void caja::setAnterior(caja *_anterior)
-{
-    anterior = _anterior;
-}
-void caja::sumarTurnos()
-{
-    turnos = turnos + 1;
-}
-int caja::getTurnos()
-{
-    return turnos;
-}
-///-------------------OBJETO ID
-class ID
-{
-private:
     int id;
-    ID *siguiente;
-
-public:
-    ID(int);
-    ID();
-    int getId();
-    void setSiguiente(ID *);
-    ID *getSiguiente();
+    ID *siguinte;
 };
 
-ID::ID()
-{
-}
-ID::ID(int _id)
-{
-    id = _id;
-}
-
-int ID::getId()
-{
-    return id;
-}
-
-void ID::setSiguiente(ID *_siguiente)
-{
-    siguiente = _siguiente;
-}
-
-ID *ID::getSiguiente()
-{
-    return siguiente;
-}
-
-////SECCION DEL CODIGO PRINCIPAL DEL CODIGO
-int numCarretas = 0, numCajas = 0, pasos = 0,ingreso=0;
-string reader;
-
-carreta *pilaCarreta1, *pilaCarreta2;
-cliente *colaEntrada, *colaCobro, *compras;
-
-caja *cajas;
-
-ID *idClientes;
-
-//////DEFINICION DE METODOS DEL PROGRAMA
-
-void inicializarSimulacion();
-void limpiar_pantalla();
-void pausa();
-void pausaDoble();
-void accionesSistema();
-//metodos de acciones con carretas
-void llenarPilaCarretas();
-void agregarCarreta(carreta *nuevaCarreta, int pila);
-carreta *tomarCarreta(int pila);
-void imprimirCarretas(int pila);
-int contarCarretas(int pila);
-//acciones de caja
-void generarCajas();
-void agregarCaja(caja *cajaNueva);
+//ACCIONES SOBRE CARRETAS
+void agregarCarreta(carreta *&pila, int id);
+void mostrarCarretas();
+carreta *tomarCarreta();
+void llenarPilasCarretas();
+//ACCIONES SOBRE CLIENTES
+//cola de espera
+void agregarColaEspera(cliente *&agregar);
+cliente *salirColaEspera();
+void imprimirColaEspera();
+//cola de cobro
+void agregarColaCobro(cliente *&agregar);
+cliente *salirColaCobro();
+void imprimirColaCobro();
+//lista de compras
+void agregarCompras(cliente *nuevo);
+cliente *salirDeCompras(int id);
+void imprimirCompras();
+//lista de cajas
+void agregarCaja(int id);
 void imprimirCajas();
-void cajaVacia();
 void vaciarCajas();
 void llenarCajas();
-int contarCajas();
-///acciones de colas de personas
-void agregarColaEntrada(cliente *clien);
-cliente *sacarColaEntrada();
-void agregarColaCobro(cliente *clien);
-cliente *sacarColaCobro();
-void imprimirColaEntrada();
-void imprimirColaCobro();
-//obtener numero aleatorio
-int getNumeroAleatorio(int inf, int sup);
-//metodos para la obtencion de ids
+//ACCIONES CON IDS
+
 void generarIds();
 int tomarId();
-void agregarId(int id);
+void ingresarID(int _id);
 void imprimirIds();
-//acciones en lista de compras
-void agregarCompras(cliente *clien);
-cliente *sacarCompras(int id);
-cliente *retornarAnteriorCompras(int id);
-void imprimirCompras();
-//accion de eliminar cliente del super
-void eliminarCliente(cliente *client);
+
+//obtener numero aleatorio
+int getNumeroAleatorio(int inf, int sup);
+
+void inicializarSimulacion();
+void acciones();
+
 //PARAMETROS PARA GRAPHVIZ
 void ejecutarGraphviz();
 void escribirDot(string code);
-string generarParametrosCompras();
-string paramCompra(cliente *compra);
-string paramCompra2(cliente *compra);
-string generarParametrosCarretas();
-string generarParametrosColaEspera();
-string generarParametrosColaPago();
-string generarParametrosCajas();
 
-//////FIN DE DEFINICION DE METODOS DEL PROGRAMA
+carreta *pilaCarreta1 = NULL, *pilaCarreta2 = NULL;
+cliente *colaEspera = NULL, *colaEsperaFin = NULL, *colaCobro = NULL, *colaCobroFin = NULL, *compras = NULL;
+caja *cajas = NULL;
+
+ID *ids = NULL, *idsFin = NULL;
+
+string reader = "";
+
+int numeroCarretas = 0, numeroCajas = 0, ingreso = -1, pasos = 1;
+
+///VARIABLES PARA GRAPHVIZ
+//variables de lista de compras
+string Nsc = "", NscR = "";
+//variables de lista de cajas
+string ParamCajas = "", ParamCajasR = "";
+//variables cola cobros
+string ParamColaCobro = "", ParamColaCobroR = "";
+//variables cola espera entrada
+string ParamColaEspera = "", ParamColaEsperaR = "";
+//variables para pila de carreta
+string ParamPila1 = "", ParamPila1R = "", ParamPila2 = "", ParamPila2R = "";
 
 int main()
 {
     //INICIALIZACION DE LOS NUMEROS ALEATORIOS
     srand(time(NULL));
+    generarIds();
 
     inicializarSimulacion();
-    pausaDoble();
 
     string option;
     short int bandera = 1;
@@ -304,10 +114,8 @@ int main()
 
     while (bandera == 1)
     {
-        //limpiar_pantalla();
-        printf("\n********************* PASO NUMERO %d *********************\n", pasos);
 
-        accionesSistema();
+        acciones();
         do
         {
             printf("Desea continuar la simulacion? y/n: ");
@@ -320,7 +128,7 @@ int main()
                 }
                 else if (reader == "Y")
                 {
-                    
+
                     bandera2 = 0;
                 }
                 else if (reader == "n")
@@ -337,7 +145,6 @@ int main()
                 {
                     bandera2 = 1;
                     printf("Error de opcion escriba la correcta\n");
-                    limpiar_pantalla();
                 }
             }
             catch (const std::exception &e)
@@ -346,25 +153,62 @@ int main()
             }
 
         } while (bandera2 == 1);
-
-        pasos++;
     }
-    pasos--;
-    ejecutarGraphviz();
+
     return 0;
 }
-
-void inicializarSimulacion()
+void acciones()
 {
-    printf("Bienvenido a la simulacion de SuperMercado\n");
-    //////////ASIGNACION DE DATOS DEL FUNCIONAMIENTO DEL PROGRAMA
-    while (numCarretas == 0)
+    printf("\n********************* PASO NUMERO %d *********************\n", pasos);
+    vaciarCajas();
+    llenarCajas();
+
+    int ale = getNumeroAleatorio(0, 100);
+    printf("Numero aleatorio generado: %d\n", ale);
+    if (compras != NULL)
     {
-        printf("Ingrese el numero de Carretas: ");
+        cliente *tmp = salirDeCompras(ale);
+        if (tmp != NULL)
+        {
+            agregarColaCobro(tmp);
+        }
+    }
+
+    while (colaEspera != NULL && (pilaCarreta1 != NULL || pilaCarreta2 != NULL))
+    {
+        carreta *tmpCarreta = tomarCarreta();
+        if (tmpCarreta != NULL)
+        {
+            cliente *tmpCliente = salirColaEspera();
+            if (tmpCliente != NULL)
+            {
+                tmpCliente->carrito = tmpCarreta;
+                agregarCompras(tmpCliente);
+                printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->id, tmpCliente->carrito->id);
+            }
+        }
+    }
+
+    for (int i = 0; i < ingreso; i++)
+    {
+        int tmp = tomarId();
+        if (tmp != -1)
+        {
+            cliente *tmpCliente = new cliente();
+            tmpCliente->id = tmp;
+            printf("Llega el cliente %d y se agrega a la cola de espera.\n", tmpCliente->id);
+            agregarColaEspera(tmpCliente);
+        }
+    }
+
+    ingreso = -1;
+    while (ingreso < 0)
+    {
+        printf("Cuantas personas ingresaran en el turno: ");
         cin >> reader;
         try
         {
-            numCarretas = std::stoi(reader);
+            ingreso = std::stoi(reader);
         }
         catch (const std::exception &e)
         {
@@ -372,13 +216,48 @@ void inicializarSimulacion()
         }
     }
 
-    while (numCajas == 0)
+    //
+    printf("-------------- MOVIMIENTO DE LOS DATOS ------------\n");
+    printf("-- CAJAS --\n");
+    imprimirCajas();
+    printf("-- COBROS --\n");
+    imprimirColaCobro();
+    printf("-- ESPERA --\n");
+    imprimirColaEspera();
+    printf("-- COMPRAS --\n");
+    imprimirCompras();
+    printf("-- CARRETAS --\n");
+    mostrarCarretas();
+    printf("-------------- FIN MOVIMIENTO DE LOS DATOS ------------\n");
+    //
+    ejecutarGraphviz();
+    pasos++;
+}
+void inicializarSimulacion()
+{
+    printf("Bienvenido a la simulacion de SuperMercado\n");
+    //////////ASIGNACION DE DATOS DEL FUNCIONAMIENTO DEL PROGRAMA
+    while (numeroCarretas == 0)
+    {
+        printf("Ingrese el numero de Carretas: ");
+        cin >> reader;
+        try
+        {
+            numeroCarretas = std::stoi(reader);
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Cantidad de ingreso invalida!!" << '\n';
+        }
+    }
+
+    while (numeroCajas == 0)
     {
         printf("Ingrese el numero de Cajas: ");
         cin >> reader;
         try
         {
-            numCajas = std::stoi(reader);
+            numeroCajas = std::stoi(reader);
         }
         catch (const std::exception &e)
         {
@@ -399,572 +278,112 @@ void inicializarSimulacion()
             std::cerr << "Cantidad de ingreso invalida!!" << '\n';
         }
     }
-
-    llenarPilaCarretas();
-    generarCajas();
-    generarIds();
-
     printf("EL SISTEMA DE INICIALIZO CON LOS SIGUINTES PARAMETROS\n");
-    printf("Numero de carretas: %d\nNumero de cajas: %d\n", contarCarretas(1) + contarCarretas(2), contarCajas());
-}
-void limpiar_pantalla()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-void pausa()
-{
-    do
+    printf("Numero de carretas: %d\nNumero de cajas: %d\n\n", numeroCarretas, numeroCajas);
+    llenarPilasCarretas();
+
+    for (int i = 1; i <= numeroCajas; i++)
     {
-        cout << '\n'
-             << "Precione Enter para continuar";
-    } while (cin.get() != '\n');
-}
-void pausaDoble()
-{
-    do
-    {
-        cout << "";
-    } while (cin.get() != '\n');
-    do
-    {
-        cout << '\n'
-             << "Precione Enter para continuar";
-    } while (cin.get() != '\n');
-}
-void accionesSistema()
-{
-    int numAle;
-    cliente *tmpCliente;
-
-    //VACIAR CAJAS DEL SISTEMA
-    vaciarCajas();
-    //FIN VACIAR CAJAS DEL SISTEMA
-
-    //LLENAR CAJAS CON CLIENTES
-    llenarCajas();
-    //FIN LENAR CAJAS CON CLIENTES
-
-    //SALIDA DE COMPRAS E INGRESO A COLA DE COBROS
-    numAle = getNumeroAleatorio(0, 100);
-    if (compras != NULL)
-    {
-        tmpCliente = sacarCompras(numAle);
-        if (tmpCliente != NULL)
-        {
-            agregarColaCobro(tmpCliente);
-        }
-    }
-    //FIN SALIDA DE COMPRAR E INGRESO A COLA DE COBROS
-
-    ///ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
-    carreta *tmpCarreta;
-
-    while (colaEntrada != NULL)
-    {
-        if (pilaCarreta1 != NULL)
-        {
-            tmpCarreta = tomarCarreta(1);
-            if(tmpCarreta != NULL){
-                tmpCliente = sacarColaEntrada();
-                tmpCliente->setCarrito(tmpCarreta);
-                printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
-                agregarCompras(tmpCliente);
-            }
-        }
-        else if (pilaCarreta2 != NULL)
-        {
-            tmpCarreta = tomarCarreta(2);
-            if(tmpCarreta != NULL){
-                tmpCliente = sacarColaEntrada();
-                tmpCliente->setCarrito(tmpCarreta);
-                printf("El cliente %d toma la carreta %d y realizara sus compras\n", tmpCliente->getId(), tmpCarreta->getId());
-                agregarCompras(tmpCliente);
-            }
-        }else{
-            break;
-        }
-    }
-    ///FIN ACCION DE TOMA DE CARRETA Y ENTRADA A COMPRAS
-
-    //ENTRADA DE CLIENTE NUEVO AL SISTEMA Y COLA DE ENTRADA
-    for (int i = 0; i < ingreso; i++)
-    {
-        //printf("Generar nuevo cliente\n");
-        int tmp = tomarId();
-        if (tmp != -1)
-        {
-            printf("Llega el cliente %d y se agrega a la cola de espera.\n", tmp);
-            agregarColaEntrada(new cliente(tmp));
-            //imprimirColaEntrada();
-        }   
-    }
-    //ENTRADA DE CLIENTE NUEVO AL SISTEMA Y COLA DE ENTRADA
-    //ENTRADA DE PROXIMAS PERSONAS
-    ingreso = -1;
-    while (ingreso < 0)
-    {
-        printf("Cuantas personas ingresaran en el turno: ");
-        cin >> reader;
-        try
-        {
-            ingreso = std::stoi(reader);
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << "Cantidad de ingreso invalida!!" << '\n';
-        }
-    }
-    //FIN ENTRADA DE PROXIMAS PERSONAS
-}
-
-void llenarPilaCarretas()
-{
-    int mitad1 = 0, mitad2 = 0;
-
-    mitad1 = numCarretas / 2;
-    mitad2 = numCarretas - mitad1;
-
-    for (int i = 1; i <= mitad1; i++)
-    {
-        agregarCarreta(new carreta(i), 1);
-    }
-
-    for (int i = (mitad1 + 1); i <= numCarretas; i++)
-    {
-        agregarCarreta(new carreta(i), 2);
+        agregarCaja(i);
     }
 }
 
-void agregarCarreta(carreta *nuevaCarreta, int pila)
+void agregarCarreta(carreta *&pila, int id)
 {
-    if (pila == 1)
-    {
-        if (pilaCarreta1 == NULL)
-        {
-            pilaCarreta1 = nuevaCarreta;
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta1;
-            nuevaCarreta->setCarreta(tmp);
-            pilaCarreta1 = nuevaCarreta;
-        }
-    }
-    else if (pila == 2)
-    {
-        if (pilaCarreta2 == NULL)
-        {
-            pilaCarreta2 = nuevaCarreta;
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta2;
-            nuevaCarreta->setCarreta(tmp);
-            pilaCarreta2 = nuevaCarreta;
-        }
-    }
-    else
-    {
-        printf("Error al agregar la carreta, ruta por defecto pila 1\n");
-        agregarCarreta(nuevaCarreta, 1);
-    }
+    carreta *nueva_carreta = new carreta();
+    nueva_carreta->id = id;
+    nueva_carreta->siguiente = pila;
+    pila = nueva_carreta;
 }
-
-carreta *tomarCarreta(int pila)
+void mostrarCarretas()
 {
+    ParamPila1 = "";
+    ParamPila1R = "";
+    ParamPila2 = "";
+    ParamPila2R = "";
 
-    if (pila == 1)
+    ParamPila1 = "TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];\n";
+    carreta *aux = pilaCarreta1;
+    if (aux != NULL)
     {
-        if (pilaCarreta1 == NULL)
-        {
-            printf("Error al tomar la carreta pila 1 vacia\n");
-            return NULL;
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta1;
-
-            if(tmp->getSiguiente()==NULL){
-                pilaCarreta1 = NULL;
-            }
-            else
-            {
-                pilaCarreta1 = tmp->getSiguiente();
-            }
-            tmp->setCarreta(NULL);
-            return tmp;
-        }
-    }
-    else if (pila == 2)
-    {
-        if (pilaCarreta2 == NULL)
-        {
-            printf("Error al tomar la carreta pila 2 vacia\n");
-            return NULL;
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta2;
-            if(tmp->getSiguiente()==NULL){
-                pilaCarreta2 = NULL;
-            }
-            else
-            {
-                pilaCarreta2 = tmp->getSiguiente();
-            }
-            tmp->setCarreta(NULL);
-            return tmp;
-        }
-    }
-    return NULL;
-}
-
-void imprimirCarretas(int pila)
-{
-    if (pila == 1)
-    {
-        printf("IMPRECION DE PILA NUMERO 1\n");
-        if (pilaCarreta1 == NULL)
-        {
-            printf("Pila numero 1 vacia\n");
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta1;
-            while (tmp != NULL)
-            {
-                printf("Carreta id: %d, pila ubicacion: 1\n", tmp->getId());
-                tmp = tmp->getSiguiente();
-            }
-        }
-    }
-    else if (pila == 2)
-    {
-        printf("IMPRECION DE PILA NUMERO 2\n");
-        if (pilaCarreta2 == NULL)
-        {
-            printf("Pila numero 2 vacia\n");
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta2;
-            while (tmp != NULL)
-            {
-                printf("Carreta id: %d, pila ubicacion: 2\n", tmp->getId());
-                tmp = tmp->getSiguiente();
-            }
-        }
-    }
-    else
-    {
-        printf("Error de imprecion en pila de carretas\n");
-        printf("Imprecion por defecto:\n");
-    }
-}
-
-int contarCarretas(int pila)
-{
-    int cont = 0;
-
-    if (pila == 1)
-    {
-        if (pilaCarreta1 == NULL)
-        {
-            return cont;
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta1;
-            while (tmp != NULL)
-            {
-                cont++;
-                tmp = tmp->getSiguiente();
-            }
-
-            return cont;
-        }
-    }
-    else if (pila == 2)
-    {
-        if (pilaCarreta2 == NULL)
-        {
-            return cont;
-        }
-        else
-        {
-            carreta *tmp;
-            tmp = pilaCarreta2;
-            while (tmp != NULL)
-            {
-                cont++;
-                tmp = tmp->getSiguiente();
-            }
-            return cont;
-        }
-    }
-    else
-    {
-        printf("Error de contar carretas\n");
-        return 0;
-    }
-}
-
-void generarCajas()
-{
-    for (int i = 1; i <= numCajas; i++)
-    {
-        agregarCaja(new caja(i, 0));
-    }
-}
-
-void agregarCaja(caja *cajaNueva)
-{
-    if (cajas == NULL)
-    {
-        cajas = cajaNueva;
-        cajas->setSiguinte(cajas);
-        cajas->setAnterior(cajas);
-    }
-    else
-    {
-        caja *tmp1;
-        tmp1 = cajas->getAnterior();
-        cajaNueva->setSiguinte(cajas);
-        cajaNueva->setAnterior(tmp1);
-
-        tmp1->setSiguinte(cajaNueva);
-        cajas->setAnterior(cajaNueva);
-    }
-}
-
-void imprimirCajas()
-{
-    printf("\nLista de Cajas\n");
-    if (cajas == NULL)
-    {
-        printf("Lista de cajas vacia\n");
-    }
-    else
-    {
-        caja *tmp;
-        tmp = cajas;
-        while (tmp->getSiguiente() != cajas)
-        {
-            printf("Caja id: %d, Caja anterior id: %d, Caja Siguinte id: %d\n", tmp->getId(), tmp->getAnterior()->getId(), tmp->getSiguiente()->getId());
-            tmp = tmp->getSiguiente();
-        }
-        printf("Caja id: %d, Caja anterior id: %d, Caja Siguinte id: %d\n", tmp->getId(), tmp->getAnterior()->getId(), tmp->getSiguiente()->getId());
-    }
-}
-
-void cajaVacia()
-{
-    if (cajas == NULL)
-    {
-        printf("Lista de cajas vacia\n");
-    }
-    else
-    {
-        caja *tmp;
-        tmp = cajas;
+        reader = "";
         do
         {
-            if (tmp->getCliente() == NULL)
-            {
-                printf("Caja id: %d esta vacia\n", tmp->getId());
+            printf("Carreta id: %d en pila 1, Atras: %d\n", aux->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
+            reader = reader + std::to_string(aux->id);
+            if(aux->siguiente!=NULL){
+                reader = reader + "|";
             }
 
-            tmp = tmp->getSiguiente();
-        } while (tmp != cajas);
-    }
-}
+            aux = aux->siguiente;
+        } while (aux != NULL);
 
-void vaciarCajas()
-{
-    if (cajas == NULL)
-    {
-        printf("Lista de cajas vacia\n");
+        ParamPila1R = "PILA1 [label=\"{" + reader + "}\"];\n";
     }
     else
     {
-        caja *tmp;
-        tmp = cajas;
+        ParamPila1 = "TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];\n";
+        ParamPila1R = "PILA1 [label=\"{|||}\"];\n";
+    }
+    ParamPila2 = "TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];\n";
+    carreta *aux2 = pilaCarreta2;
+    if (aux2 != NULL)
+    {
+        reader="";
         do
         {
-            if (tmp->getCliente() != NULL)
-            {
-                printf("El cliente %d sale del sistema. Libera carreta %d y la caja %d\n", tmp->getCliente()->getId(), tmp->getCliente()->getCarrito()->getId(), tmp->getId());
-                eliminarCliente(tmp->getCliente());
-                tmp->setCliente(NULL);
-                tmp->sumarTurnos();
+            printf("Carreta id: %d en pila 2, Atras: %d\n", aux2->id, (aux2->siguiente == NULL) ? -1 : aux2->siguiente->id);
+
+            reader = reader + std::to_string(aux2->id);
+            if(aux2->siguiente!=NULL){
+                reader = reader + "|";
             }
 
-            tmp = tmp->getSiguiente();
-        } while (tmp != cajas);
+            aux2 = aux2->siguiente;
+        } while (aux2 != NULL);
+        ParamPila2R = "PILA2 [label=\"{"+reader+"}\"];\n";
+    }else{
+        ParamPila2 = "TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];\n";
+        ParamPila2R = "PILA2 [label=\"{||||}\"];\n";
     }
 }
-void llenarCajas()
+carreta *tomarCarreta()
 {
-    if (cajas == NULL)
+
+    int opcion = getNumeroAleatorio(1, 2);
+    carreta *aux;
+
+    if (pilaCarreta1 != NULL)
     {
-        printf("Lista de cajas vacia\n");
+        aux = pilaCarreta1;
+        pilaCarreta1 = aux->siguiente;
+
+        return aux;
+    }
+    else if (pilaCarreta2 != NULL)
+    {
+
+        aux = pilaCarreta2;
+        pilaCarreta2 = aux->siguiente;
+        aux->siguiente = NULL;
+        return aux;
     }
     else
     {
-        caja *tmp;
-        cliente *tmpCliente;
-        tmp = cajas;
-        do
-        {
-            if (tmp->getCliente() == NULL)
-            {
-                if (colaCobro != NULL)
-                {
-                    tmpCliente = sacarColaCobro();
-                    printf("El cliente %d esta siendo atendido por la caja %d\n", tmpCliente->getId(), tmp->getId());
-                    tmp->setCliente(tmpCliente);
-                }
-            }
-
-            tmp = tmp->getSiguiente();
-        } while (tmp != cajas);
-    }
-}
-
-int contarCajas()
-{
-    if (cajas == NULL)
-    {
-        return 0;
-    }
-    else
-    {
-        caja *tmp;
-        int cont = 0;
-        tmp = cajas;
-        do
-        {
-            cont++;
-            tmp = tmp->getSiguiente();
-        } while (tmp != cajas);
-        return cont;
-    }
-}
-
-void agregarColaEntrada(cliente *clien)
-{
-    if (colaEntrada == NULL)
-    {
-        colaEntrada = clien;
-    }
-    else
-    {
-        cliente *tmp;
-        tmp = colaEntrada;
-        while (tmp->getSiguiente() != NULL)
-        {
-            tmp = tmp->getSiguiente();
-        }
-        tmp->setSiguinte(clien);
-    }
-}
-
-cliente *sacarColaEntrada()
-{
-    if (colaEntrada == NULL)
-    {
-        printf("Cola de entrada vacia, no se puede sacar\n");
         return NULL;
     }
-    else
-    {
-        cliente *tmp;
-        tmp = colaEntrada;
-        colaEntrada = tmp->getSiguiente();
-        tmp->setSiguinte(NULL);
-        return tmp;
-    }
 }
-
-void agregarColaCobro(cliente *clien)
+void llenarPilasCarretas()
 {
-    if (colaCobro == NULL)
-    {
-        colaCobro = clien;
-    }
-    else
-    {
-        cliente *tmp;
-        tmp = colaCobro;
-        while (tmp->getSiguiente() != NULL)
-        {
-            tmp = tmp->getSiguiente();
-        }
-        tmp->setSiguinte(clien);
-    }
-}
+    int tmp = numeroCarretas / 2;
 
-cliente *sacarColaCobro()
-{
-    if (colaCobro == NULL)
+    for (int i = 1; i <= tmp; i++)
     {
-        printf("Cola de cobro vacia, no se puede sacar\n");
-        return NULL;
+        agregarCarreta(pilaCarreta1, i);
     }
-    else
+    for (int i = (tmp + 1); i <= numeroCarretas; i++)
     {
-        cliente *tmp;
-        tmp = colaCobro;
-        colaCobro = tmp->getSiguiente();
-        tmp->setSiguinte(NULL);
-        return tmp;
-    }
-}
-
-void imprimirColaEntrada()
-{
-    if (colaEntrada == NULL)
-    {
-        printf("Cola de entrada vacia\n");
-    }
-    else
-    {
-        cliente *tmp;
-        tmp = colaEntrada;
-        while (tmp != NULL)
-        {
-            printf("Cliente id: %d esperando una carreta\n", tmp->getId());
-            tmp = tmp->getSiguiente();
-        }
-    }
-}
-
-void imprimirColaCobro()
-{
-    if (colaCobro == NULL)
-    {
-        printf("Cola de cobro vacia\n");
-    }
-    else
-    {
-        cliente *tmp;
-        tmp = colaCobro;
-        while (tmp != NULL)
-        {
-            printf("Cliente id: %d esperando una caja\n", tmp->getId());
-            tmp = tmp->getSiguiente();
-        }
+        agregarCarreta(pilaCarreta2, i);
     }
 }
 
@@ -973,226 +392,451 @@ int getNumeroAleatorio(int inf, int sup)
     return (inf + rand() % (sup - inf));
 }
 
+void agregarColaEspera(cliente *&agregar)
+{
+    agregar->siguiente = NULL;
+    if (colaEspera == NULL)
+    {
+        colaEspera = agregar;
+    }
+    else
+    {
+        colaEsperaFin->siguiente = agregar;
+    }
+    colaEsperaFin = agregar;
+}
+cliente *salirColaEspera()
+{
+    cliente *aux = colaEspera;
+    if (colaEspera == colaEsperaFin)
+    {
+        colaEspera = NULL;
+        colaEsperaFin = NULL;
+    }
+    else
+    {
+        colaEspera = colaEspera->siguiente;
+    }
+    if (aux != NULL)
+    {
+        aux->siguiente = NULL;
+    }
+    return aux;
+}
+
+void imprimirColaEspera()
+{
+    ParamColaEspera = "";
+    ParamColaEsperaR = "";
+
+    cliente *aux;
+    aux = colaEspera;
+    if (aux != NULL)
+    {
+        do
+        {
+            printf("Cliente id: %d, esperando en entrada, atras: %d\n", aux->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
+            reader = "";
+            reader = "COLE" + std::to_string(aux->id) + "[shape = box,label=\"Cliente " + std::to_string(aux->id) + "\"];" + "\n";
+            ParamColaEspera = ParamColaEspera + reader;
+            reader = "";
+            if (aux->siguiente != NULL)
+            {
+                reader = "COLE" + std::to_string(aux->id) + " -> COLE" + std::to_string(aux->siguiente->id) + ";" + "\n";
+            }
+            ParamColaEsperaR = ParamColaEsperaR + reader;
+            aux = aux->siguiente;
+        } while (aux != NULL);
+    }
+    else
+    {
+        printf("Cola de espera vacia\n");
+        ParamColaEspera = "TCE2 [shape = box,label = \"COLA DE ESPERA VACIA\"];\n";
+    }
+}
+
+void agregarColaCobro(cliente *&agregar)
+{
+    agregar->siguiente = NULL;
+    printf("El cliente id: %d, salio de las compras ahora esta en cola de cobros\n", agregar->id);
+    if (colaCobro == NULL)
+    {
+        colaCobro = agregar;
+    }
+    else
+    {
+        colaCobroFin->siguiente = agregar;
+    }
+    colaCobroFin = agregar;
+}
+cliente *salirColaCobro()
+{
+    cliente *aux = colaCobro;
+    if (colaCobro == colaCobroFin)
+    {
+        colaCobro = NULL;
+        colaCobroFin = NULL;
+    }
+    else
+    {
+        colaCobro = colaCobro->siguiente;
+    }
+    if (aux != NULL)
+    {
+        aux->siguiente = NULL;
+    }
+    return aux;
+}
+void imprimirColaCobro()
+{
+    ParamColaCobro = "";
+    ParamColaCobroR = "";
+    cliente *aux;
+    aux = colaCobro;
+    if (aux != NULL)
+    {
+        do
+        {
+            printf("Cliente id: %d, con carreta: %d, esperando a ser atendido, atras: %d\n", aux->id, aux->carrito->id, (aux->siguiente == NULL) ? -1 : aux->siguiente->id);
+            reader = "";
+            reader = "COLC" + std::to_string(aux->id) + "[shape = box,label=\"Cliente " + std::to_string(aux->id) + "\"];" + "\n";
+            ParamColaCobro = ParamColaCobro + reader;
+            reader = "";
+            if (aux->siguiente != NULL)
+            {
+                reader = "COLC" + std::to_string(aux->id) + " -> COLC" + std::to_string(aux->siguiente->id) + ";" + "\n";
+            }
+            ParamColaCobroR = ParamColaCobroR + reader;
+            aux = aux->siguiente;
+        } while (aux != NULL);
+    }
+    else
+    {
+        printf("Cola de cobro vacia\n");
+        ParamColaCobro = "TC2 [shape = box,label = \"COLA PARA PAGAR VACIA\"];\n";
+    }
+}
+
+void agregarCompras(cliente *nuevo)
+{
+
+    if (compras == NULL)
+    {
+        compras = nuevo;
+        nuevo->siguiente = compras;
+    }
+    else
+    {
+        cliente *antCompras = compras;
+        while (antCompras->siguiente != compras)
+        {
+            antCompras = antCompras->siguiente;
+        }
+        nuevo->siguiente = compras;
+        antCompras->siguiente = nuevo;
+    }
+}
+cliente *salirDeCompras(int id)
+{
+    cliente *anteriorSalir;
+    bool encontrado = false;
+    if (compras == NULL)
+    {
+        printf("Lista de compras vacia\n");
+        return NULL;
+    }
+    else
+    {
+        anteriorSalir = compras;
+        do
+        {
+            if (anteriorSalir->siguiente->id == id)
+            {
+                encontrado = true;
+                break;
+            }
+            else
+            {
+                anteriorSalir = anteriorSalir->siguiente;
+            }
+
+        } while (anteriorSalir != compras);
+        if (encontrado)
+        {
+            cliente *postSalir = anteriorSalir->siguiente->siguiente;
+            cliente *salida = anteriorSalir->siguiente;
+
+            anteriorSalir->siguiente = postSalir;
+            compras = postSalir;
+
+            salida->siguiente = NULL;
+            salida->anterior = NULL;
+
+            return salida;
+        }
+        else
+        {
+            printf("No existe un elemento con el id ingresado\n");
+            return NULL;
+        }
+    }
+}
+void imprimirCompras()
+{
+    Nsc = "";
+    NscR = "";
+    cliente *tmp = compras;
+
+    if (tmp == NULL)
+    {
+        printf("Lista de compras vacia\n");
+        Nsc = "COMT2 [shape = box,label = \"LISTA DE COMPRAS VACIA\"];\n";
+    }
+    else
+    {
+        do
+        {
+            printf("Cliente id: %d, con carreta id: %d,en compras, siguinte: %d\n", tmp->id, tmp->carrito->id, tmp->siguiente->id);
+            reader = "";
+            reader = "COM" + std::to_string(tmp->id) + " [shape = box,label = \"Cliente " + std::to_string(tmp->id) + "\\nCarreta " + std::to_string(tmp->carrito->id) + "\"];" + "\n";
+            Nsc = Nsc + reader;
+            reader = "";
+            reader = "COM" + std::to_string(tmp->id) + " -> COM" + std::to_string(tmp->siguiente->id) + ";" + "\n";
+            NscR = NscR + reader;
+            tmp = tmp->siguiente;
+        } while (tmp != compras);
+    }
+}
+
+void agregarCaja(int id)
+{
+    caja *nuevo = new caja();
+    nuevo->id = id;
+    nuevo->turnos = 0;
+
+    if (cajas == NULL)
+    {
+        cajas = nuevo;
+        nuevo->siguiente = NULL;
+        nuevo->anterior = NULL;
+    }
+    else
+    {
+        caja *ultimaCaja = cajas;
+        while (ultimaCaja->siguiente != NULL)
+        {
+            ultimaCaja = ultimaCaja->siguiente;
+        }
+        ultimaCaja->siguiente = nuevo;
+        nuevo->anterior = ultimaCaja;
+        nuevo->siguiente = NULL;
+    }
+}
+void imprimirCajas()
+{
+    ParamCajas = "";
+    ParamCajasR = "";
+    caja *tmp = cajas;
+    if (tmp != NULL)
+    {
+        while (tmp != NULL)
+        {
+            printf("Caja id: %d, turnos: %d, Estado: %s, Anterior: %d, Siguinte %d\n", tmp->id, tmp->turnos, (tmp->client == NULL) ? "Libre" : "Ocupado", (tmp->anterior == NULL) ? -1 : tmp->anterior->id, (tmp->siguiente == NULL) ? -1 : tmp->siguiente->id);
+
+            reader = "";
+            reader = "CAJA" + std::to_string(tmp->id) + " [shape = box,label = \"Caja " + std::to_string(tmp->id) + "\\n" + std::to_string(tmp->turnos) + " Turnos\\n" + ((tmp->client == NULL) ? "Libre" : "Ocupado") + "\"];" + "\n";
+            ParamCajas = ParamCajas + reader;
+            reader = "";
+            if (tmp->siguiente != NULL)
+            {
+                reader = "CAJA" + std::to_string(tmp->id) + " -> CAJA" + std::to_string(tmp->siguiente->id) + ";" + "\n";
+            }
+            ParamCajasR = ParamCajasR + reader;
+            reader = "";
+            if (tmp->anterior != NULL)
+            {
+                reader = "CAJA" + std::to_string(tmp->id) + " -> CAJA" + std::to_string(tmp->anterior->id) + ";" + "\n";
+            }
+            ParamCajasR = ParamCajasR + reader;
+            tmp = tmp->siguiente;
+        }
+    }
+    else
+    {
+        printf("Lista de Cajas vacia\n");
+    }
+}
+void vaciarCajas()
+{
+    caja *tmp = cajas;
+    if (tmp != NULL)
+    {
+        while (tmp != NULL)
+        {
+            if (tmp->client != NULL)
+            {
+                cliente *aux = tmp->client;
+                tmp->client = NULL;
+                //ultima linea agregada
+                tmp->turnos = tmp->turnos + 1;
+
+                printf("Sale el cliente %d y deja libre la carreta %d\n", aux->id, aux->carrito->id);
+
+                ingresarID(aux->id);
+                if (getNumeroAleatorio(1, 2) == 1)
+                {
+                    agregarCarreta(pilaCarreta1, aux->carrito->id);
+                    printf("Carrito %d entra en la pila 1\n", aux->carrito->id);
+                    delete aux->carrito;
+                    delete aux;
+                }
+                else
+                {
+                    agregarCarreta(pilaCarreta2, aux->carrito->id);
+                    printf("Carrito %d entra en la pila 1\n", aux->carrito->id);
+                    delete aux->carrito;
+                    delete aux;
+                }
+            }
+            tmp = tmp->siguiente;
+        }
+    }
+    else
+    {
+        printf("Lista de Cajas vacia\n");
+    }
+}
+void llenarCajas()
+{
+    caja *tmp = cajas;
+    if (tmp != NULL)
+    {
+        while (tmp != NULL)
+        {
+            if (tmp->client == NULL)
+            {
+                cliente *aux = salirColaCobro();
+                if (aux != NULL)
+                {
+                    tmp->client = aux;
+                    printf("El cliente: %d, esta siendo atendido en la caja: %d\n", aux->id, tmp->id);
+                }
+            }
+            tmp = tmp->siguiente;
+        }
+    }
+    else
+    {
+        printf("Lista de Cajas vacia\n");
+    }
+}
 void generarIds()
 {
     for (int i = 0; i <= 100; i++)
     {
-        agregarId(i);
+        ingresarID(i);
     }
 }
-
 int tomarId()
 {
-    if (idClientes == NULL)
+    ID *aux = ids;
+    int val = -1;
+    if (ids == idsFin)
     {
-        printf("Error al tomar id para cliente\n");
-        return -1;
+        ids = NULL;
+        idsFin = NULL;
     }
     else
     {
-        ID *tmp;
-        int val;
-
-        tmp = idClientes;
-
-        idClientes = tmp->getSiguiente();
-        val = tmp->getId();
-
-        free(tmp);
-        return val;
+        ids = ids->siguinte;
     }
+    if (aux != NULL)
+    {
+        aux->siguinte = NULL;
+        val = aux->id;
+        delete aux;
+    }
+    return val;
 }
-
-void agregarId(int id)
+void ingresarID(int _id)
 {
-    if (idClientes == NULL)
+    ID *nuevo = new ID();
+    nuevo->id = _id;
+    nuevo->siguinte = NULL;
+
+    if (ids == NULL)
     {
-        idClientes = new ID(id);
+        ids = nuevo;
     }
     else
     {
-        ID *tmp, *tmp2;
-        tmp2 = new ID(id);
-
-        tmp = idClientes;
-
-        while (tmp->getSiguiente() != NULL)
-        {
-            tmp = tmp->getSiguiente();
-        }
-
-        tmp->setSiguiente(tmp2);
+        idsFin->siguinte = nuevo;
     }
+    idsFin = nuevo;
 }
+
 void imprimirIds()
 {
-    if (idClientes == NULL)
-    {
-        printf("Ids clientes vacia\n");
-    }
-    else
-    {
-        ID *tmp;
-        tmp = idClientes;
-        while (tmp != NULL)
-        {
-            printf("Id: %d\n", tmp->getId());
-            tmp = tmp->getSiguiente();
-        }
-    }
-}
-
-void agregarCompras(cliente *clien)
-{
-    if (compras == NULL)
-    {
-        compras = clien;
-        compras->setSiguinte(compras);
-    }
-    else
-    {
-        cliente *tmp;
-        tmp = compras->getSiguiente();
-        compras->setSiguinte(clien);
-        clien->setSiguinte(tmp);
-    }
-}
-cliente *sacarCompras(int id)
-{
-    if (compras == NULL)
-    {
-        printf("La lista de compras esta vacia\n");
-        return NULL;
-    }
-    else
-    {
-        cliente *tmp, *tmp2, *tmp3;
-
-        if (compras->getId() == id)
-        {
-            tmp = compras;
-            while (tmp->getSiguiente() != compras)
-            {
-                tmp = tmp->getSiguiente();
-            }
-            tmp2 = tmp->getSiguiente()->getSiguiente();
-            tmp3 = tmp->getSiguiente();
-            tmp->setSiguinte(tmp2);
-
-            if (tmp == tmp2 && tmp == tmp3)
-            {
-                compras = NULL;
-            }
-            else
-            {
-                compras = tmp2;
-            }
-            tmp3->setSiguinte(NULL);
-            return tmp3;
-        }
-        else
-        {
-            tmp = retornarAnteriorCompras(id);
-            if (tmp == NULL)
-            {
-                //printf("No existe un cliente con el id %d\n", id);
-                return NULL;
-            }
-            else
-            {
-                tmp2 = tmp->getSiguiente()->getSiguiente();
-                tmp3 = tmp->getSiguiente();
-                tmp->setSiguinte(tmp2);
-                tmp3->setSiguinte(NULL);
-                return tmp3;
-            }
-        }
-    }
-}
-cliente *retornarAnteriorCompras(int id)
-{
-    if (compras == NULL)
-    {
-        return NULL;
-    }
-    else
-    {
-        cliente *tmp;
-        tmp = compras;
-        do
-        {
-            if (tmp->getSiguiente()->getId() == id)
-            {
-                return tmp;
-            }
-            tmp = tmp->getSiguiente();
-        } while (tmp != compras);
-        return NULL;
-    }
-}
-
-void imprimirCompras()
-{
-    cliente *tmp;
-    tmp = compras;
-    if (tmp == NULL)
-    {
-        printf("Lista de compras vacia\n");
-    }
-    else
+    ID *aux;
+    aux = ids;
+    if (aux != NULL)
     {
         do
         {
-            printf("Cliente id: %d en compras\n", tmp->getId());
-            tmp = tmp->getSiguiente();
-        } while (tmp != compras);
+            printf("ID: %d, atras: %d\n", aux->id, (aux->siguinte == NULL) ? -1 : aux->siguinte->id);
+            aux = aux->siguinte;
+        } while (aux != NULL);
     }
-}
-
-void eliminarCliente(cliente *client)
-{
-    int ale = getNumeroAleatorio(1, 2);
-    printf("La carreta %d se ingreso en la pila %d\n", client->getCarrito()->getId(), ale);
-    agregarCarreta(client->getCarrito(), ale);
-    client->setCarrito(NULL);
-    agregarId(client->getId());
-    free(client);
+    else
+    {
+        printf("Cola de cobro vacia\n");
+    }
 }
 
 void ejecutarGraphviz()
 {
-    string codigo = "digraph estructuraDatos"+std::to_string(pasos)+" {\n"+
-                        "PT [shape = box,style=bold,label = \"INDICADOR DE GRAFICA SEGUN PASOS:\\nPaso: "+std::to_string(pasos)+"\",color=red];"+
-                        "subgraph compras {\n"+
-                           "TCOM [shape = ellipse,style=bold,label = \"COMPRAS\",color=red];\n"+
-                           generarParametrosCompras()+
-                        "}\n"+
-                        "subgraph carretas{\n"+
-                            "subgraph pilas{\n"+
-                                "node [shape=record];\n"+
-                                generarParametrosCarretas()+
-                            "}\n"+
-                        "}\n"+
-                        "subgraph colaEspera{\n"+
-                            "TCE [shape = ellipse,style=bold,color=red,label = \"COLA DE ESPERA\"];\n"+
-                            generarParametrosColaEspera()+
-                        "}\n"+
-                        "subgraph colaCobro{\n"+
-                            "TC [shape = ellipse,style=bold,color=red,label = \"COLA PARA PAGAR\"];\n"+
-                            generarParametrosColaPago()+
-                        "}\n"+
-                        "subgraph cajas{\n"+
-                            "TCA [shape = ellipse,style=bold,color=red,label = \"CAJAS\"];\n"+
-                            generarParametrosCajas()+
-                        "}\n"+
+    string codigo = "digraph estructuraDatos" + std::to_string(pasos) + " {\n" +
+                    "PT [shape = box,style=bold,label = \"INDICADOR DE GRAFICA SEGUN PASOS:\\nPaso: " + std::to_string(pasos) + "\",color=red];" +
+                    "subgraph compras {\n" +
+                    "TCOM [shape = ellipse,style=bold,label = \"COMPRAS\",color=red];\n" +
+                    Nsc +
+                    NscR +
+                    "}\n" +
+                    "subgraph carretas{\n" +
+                    "subgraph pilas{\n" +
+                    "node [shape=record];\n" +
+                    ParamPila1+
+                    ParamPila1R+
+                    ParamPila2+
+                    ParamPila2R+
+                    "}\n" +
+                    "}\n" +
+                    "subgraph colaEspera{\n" +
+                    "TCE [shape = ellipse,style=bold,color=red,label = \"COLA DE ESPERA\"];\n" +
+                    ParamColaEspera +
+                    ParamColaEsperaR +
+                    "}\n" +
+                    "subgraph colaCobro{\n" +
+                    "TC [shape = ellipse,style=bold,color=red,label = \"COLA PARA PAGAR\"];\n" +
+                    ParamColaCobro +
+                    ParamColaCobroR +
+                    "}\n" +
+                    "subgraph cajas{\n" +
+                    "TCA [shape = ellipse,style=bold,color=red,label = \"CAJAS\"];\n" +
+                    ParamCajas +
+                    ParamCajasR +
+                    "}\n" +
                     "}\n";
 
     escribirDot(codigo);
     //EJECUCION DE DOT EN LINUX
     int respuesta = system("dot -Tpng -O estructura.dot");
-    if(respuesta == 0){
+    if (respuesta == 0)
+    {
         printf("EL diagrama se genero exitosamente\n");
-    }else{
+    }
+    else
+    {
         printf("Error en generar diagrama, verifique las variables del sistema, el programa fue programado para LINUX\n");
     }
 }
@@ -1209,166 +853,4 @@ void escribirDot(string code)
         archivo << code;
         archivo.close();
     }
-}
-string generarParametrosCompras()
-{
-    string p1="",p2="";
-    cliente *tmp;
-    tmp = compras;
-    if(tmp!=NULL){
-        do
-        {
-
-            p1 = p1+"COM"+tmp->getIdS()+" [shape = box,label = \"Cliente "+tmp->getIdS()+"\\nCarreta "+tmp->getCarrito()->getIdS()+"\"];"+"\n";
-            p2 = p2+"COM"+tmp->getIdS()+" -> COM"+tmp->getSiguiente()->getIdS()+";"+"\n";
-
-            tmp = tmp->getSiguiente();
-        } while (tmp!=compras);
-    }else{
-        p1 = "COMT2 [shape = box,label = \"LISTA DE COMPRAS VACIA\"];\n";
-    }
-    
-    return p1+p2;
-}
-
-string generarParametrosCarretas()
-{
-    string p1 = "", r1 = "";
-    carreta *tmpC1, *tmpC2;
-    tmpC1 = pilaCarreta1;
-    tmpC2 = pilaCarreta2;
-
-    if (tmpC1 != NULL)
-    {
-        do
-        {
-            r1 = r1 + std::to_string(tmpC1->getId());
-            if (tmpC1->getSiguiente() != NULL)
-            {
-                r1 = r1 + "|";
-            }
-            tmpC1 = tmpC1->getSiguiente();
-        } while (tmpC1 != NULL);
-        p1 = p1 + "TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];" + "\n";
-        p1 = p1 + "PILA1 [label=\"{" + r1 + "}\"];" + "\n";
-    }
-    else
-    {
-        p1 = p1 + "TPIL [shape = ellipse,style=bold,color=red,label = \"PILA 1\\nCarretas\"];" + "\n";
-        p1 = p1 + "PILA1 [label=\"{||||}\"];" + "\n";
-    }
-    r1 = "";
-    if (tmpC2 != NULL)
-    {
-        do
-        {
-            r1 = r1 + std::to_string(tmpC2->getId());
-            if (tmpC2->getSiguiente() != NULL)
-            {
-                r1 = r1 + "|";
-            }
-            tmpC2 = tmpC2->getSiguiente();
-        } while (tmpC2 != NULL);
-
-        p1 = p1 + "TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];" + "\n";
-        p1 = p1 + "PILA2 [label=\"{" + r1 + "}\"];" + "\n";
-    }
-    else
-    {
-        p1 = p1 + "TPIL2 [shape = ellipse,style=bold,color=red,label = \"PILA 2\\nCarretas\"];" + "\n";
-        p1 = p1 + "PILA2 [label=\"{||||}\"];" + "\n";
-    }
-    return p1;
-}
-
-string generarParametrosColaEspera()
-{
-    string p1 = "", p2 = "", r1 = "", r2 = "";
-    cliente *tmp;
-    tmp = colaEntrada;
-
-    if (tmp != NULL)
-    {
-        do
-        {
-            r1 = std::to_string(tmp->getId());
-            p1 = p1 + "COLE" + r1 + "[shape = box,label=\"Cliente " + r1 + "\"];" + "\n";
-
-            if (tmp->getSiguiente() != NULL)
-            {
-                r2 = std::to_string(tmp->getSiguiente()->getId());
-                p2 = p2 + "COLE" + r1 + " -> COLE" + r2 + ";" + "\n";
-            }
-
-            tmp = tmp->getSiguiente();
-        } while (tmp != NULL);
-    }
-    else
-    {
-        p1 = "TCE2 [shape = box,label = \"COLA DE ESPERA VACIA\"];\n";
-    }
-    return p1 + p2;
-}
-string generarParametrosColaPago()
-{
-    string p1 = "", p2 = "", r1 = "", r2 = "";
-    cliente *tmp;
-    tmp = colaCobro;
-
-    if (tmp != NULL)
-    {
-        do
-        {
-            r1 = std::to_string(tmp->getId());
-            p1 = p1 + "COLC" + r1 + "[shape = box,label=\"Cliente " + r1 + "\"];" + "\n";
-
-            if (tmp->getSiguiente() != NULL)
-            {
-                r2 = std::to_string(tmp->getSiguiente()->getId());
-                p2 = p2 + "COLC" + r1 + " -> COLC" + r2 + ";" + "\n";
-            }
-            tmp = tmp->getSiguiente();
-        } while (tmp != NULL);
-    }
-    else
-    {
-        p1 = "TC2 [shape = box,label = \"COLA PARA PAGAR VACIA\"];\n";
-    }
-
-    return p1 + p2;
-}
-string generarParametrosCajas()
-{
-    string p1 = "", p2 = "", r1 = "", r2 = "", r3 = "", r4 = "", r5 = "";
-    caja *tmp;
-    tmp = cajas;
-
-    if (cajas != NULL)
-    {
-        do
-        {
-            r1 = std::to_string(tmp->getId());
-            r2 = std::to_string(tmp->getTurnos());
-
-            if (tmp->getCliente() != NULL)
-            {
-                r3 = "Ocupada";
-            }
-            else
-            {
-                r3 = "Libre";
-            }
-
-            r4 = std::to_string(tmp->getAnterior()->getId());
-            r5 = std::to_string(tmp->getSiguiente()->getId());
-
-            p1 = p1 + "CAJA" + r1 + " [shape = box,label = \"Caja " + r1 + "\\n" + r2 + " Turnos\\n" + r3 + "\"];" + "\n";
-
-            p2 = p2 + "CAJA" + r1 + " -> CAJA" + r4 + ";" + "\n";
-            p2 = p2 + "CAJA" + r1 + " -> CAJA" + r5 + ";" + "\n";
-
-            tmp = tmp->getSiguiente();
-        } while (tmp != cajas);
-    }
-    return p1 + p2;
 }
