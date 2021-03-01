@@ -78,6 +78,9 @@ void acciones();
 void ejecutarGraphviz();
 void escribirDot(string code);
 
+//VERIFICACION DE GRAPHVIZ
+void verificarGraficador();
+
 carreta *pilaCarreta1 = NULL, *pilaCarreta2 = NULL;
 cliente *colaEspera = NULL, *colaEsperaFin = NULL, *colaCobro = NULL, *colaCobroFin = NULL, *compras = NULL;
 caja *cajas = NULL;
@@ -102,6 +105,8 @@ string ParamPila1 = "", ParamPila1R = "", ParamPila2 = "", ParamPila2R = "";
 
 int main()
 {
+    //VERIFICACION DE LOS COMPONENTES EXTERNOS
+    verificarGraficador();
     //INICIALIZACION DE LOS NUMEROS ALEATORIOS
     srand(time(NULL));
     generarIds();
@@ -837,7 +842,7 @@ void ejecutarGraphviz()
     }
     else
     {
-        printf("Error en generar diagrama, verifique las variables del sistema, el programa fue programado para LINUX\n");
+        printf("Error en generar diagrama, Graphviz no esta instalado en su distribucion\n");
     }
 }
 void escribirDot(string code)
@@ -852,5 +857,16 @@ void escribirDot(string code)
     {
         archivo << code;
         archivo.close();
+    }
+}
+
+void verificarGraficador(){
+    int res = system("dot -V");
+    //printf("La respuesta es: %d",res);
+    if(res != 0){
+        cout << "Parece que Graphviz no esta instalado en su distrubucion\nLa instalacion es necesaria para graficar las estruturas\nPrube \"sudo apt install graphviz\" para instalar Graphviz" << endl;
+        cout << endl;
+        cout << endl;
+        
     }
 }
